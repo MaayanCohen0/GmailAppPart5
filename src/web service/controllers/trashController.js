@@ -1,0 +1,393 @@
+const trashModel = require("../models/trashModel");
+const { getUserById } = require("../models/usersModel");
+const mailModel = require("../models/mailsModel");
+const draftModel = require("../models/draftsModel");
+const spamModel = require("../models/spamModel");
+
+// Get all trash mails of the user
+exports.getTrashMails = (req, res) => {
+  const userId = req.userId;
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required" });
+  }
+
+  const user = getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const username = user.username;
+  try {
+    return res.status(200).json(trashModel.getAllTrashByUser(username));
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch trash", detail: e.message || String(e) });
+  }
+};
+
+// Get one trash mail by ID
+exports.getTrashMailById = (req, res) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required" });
+  }
+
+  const user = getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const username = user.username;
+  const mail = trashModel.getTrashById(id, username);
+
+  if (!mail) {
+    return res
+      .status(404)
+      .json({ error: "Trash mail not found for this user" });
+  }
+
+  return res.status(200).json(mail);
+};
+
+// Delete a trash mail permanently
+exports.deleteTrashMailById = (req, res) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required" });
+  }
+
+  const user = getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const username = user.username;
+  const success = trashModel.finalDeleteTrashById(id, username);
+
+  if (!success) {
+    return res
+      .status(404)
+      .json({ error: "Trash mail not found or already deleted" });
+  }
+
+  return res.status(200).json({ message: "Trash mail deleted" });
+};
+
+// Restore a trash mail to source
+exports.restoreTrashMail = (req, res) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required" });
+  }
+
+  const user = getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const username = user.username;
+  const mail = trashModel.getTrashById(id, username);
+
+  if (!mail) {
+    return res
+      .status(404)
+      .json({ error: "Trash mail not found for this user" });
+  }
+
+  let copiedMail;
+  let destination;
+
+  // Determine destination and create copy
+  switch (mail.trashSource) {
+    case "inbox":
+      copiedMail = mailModel.createCopyOfMail(mail, username);
+      destination = "inbox";
+      break;
+    case "drafts":
+      copiedMail = draftModel.createCopyOfDraft(mail, username);
+      destination = "drafts";
+      break;
+    case "spam":
+      copiedMail = spamModel.createCopyOfSpam(mail, username);
+      destination = "spam";
+      break;
+    default:
+      copiedMail = mailModel.createCopyOfMail(mail, username);
+      destination = "inbox";
+  }
+
+  if (!copiedMail) {
+    return res
+      .status(500)
+      .json({ error: `Failed to restore trash mail to ${destination}` });
+  }
+
+  const success = trashModel.deleteTrashById(id, username);
+  if (!success) {
+    return res.status(500).json({ error: "Failed to remove trash mail" });
+  }
+
+  return res
+    .status(201)
+    .json({ message: `Mail restored to ${destination}`, mail: copiedMail });
+};
+
+// Add a mail from inbox to trash
+exports.addToTrashFromInbox = (req, res) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required" });
+  }
+
+  const user = getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const username = user.username;
+  const mail = mailModel.getMailById(id, username);
+
+  if (!mail) {
+    return res.status(404).json({ error: "Mail not found for this user" });
+  }
+
+  try {
+    const result = mailModel.deleteMailById(id, username);
+    if (!result) {
+      return res
+        .status(500)
+        .json({ error: "Failed to delete mail from inbox" });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      error: "Failed to delete mail from inbox",
+      detail: error.message || String(error),
+    });
+  }
+
+  try {
+    trashModel.addTrashMail(mail, "inbox");
+    return res
+      .status(201)
+      .json({ message: "Mail marked as trash", mail: mail });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Failed to add mail to trash",
+      detail: error.message || String(error),
+    });
+  }
+};
+
+// Add a mail from drafts to trash
+exports.addToTrashFromDraft = (req, res) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required" });
+  }
+
+  const user = getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const username = user.username;
+  const mail = draftModel.getDraftById(id, username);
+
+  if (!mail) {
+    return res.status(404).json({ error: "Draft not found for this user" });
+  }
+
+  try {
+    const result = draftModel.deleteDraftById(id, username);
+    if (!result) {
+      return res
+        .status(500)
+        .json({ error: "Failed to delete mail from drafts" });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      error: "Failed to delete mail from drafts",
+      detail: error.message || String(error),
+    });
+  }
+
+  try {
+    trashModel.addTrashMail(mail, "drafts");
+    return res
+      .status(201)
+      .json({ message: "Mail marked as trash", mail: mail });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Failed to add mail to trash",
+      detail: error.message || String(error),
+    });
+  }
+};
+
+// Add a mail from spam to trash
+exports.addToTrashFromSpam = (req, res) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required" });
+  }
+
+  const user = getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const username = user.username;
+  const mail = spamModel.getSpamById(id, username);
+
+  if (!mail) {
+    return res.status(404).json({ error: "Spam not found for this user" });
+  }
+
+  try {
+    const result = spamModel.finalDeleteSpamById(id, username);
+    if (!result) {
+      return res.status(500).json({ error: "Failed to delete mail from spam" });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      error: "Failed to delete mail from spam",
+      detail: error.message || String(error),
+    });
+  }
+
+  try {
+    trashModel.addTrashMail(mail, "spam");
+    return res
+      .status(201)
+      .json({ message: "Mail marked as trash", mail: mail });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Failed to add mail to trash",
+      detail: error.message || String(error),
+    });
+  }
+};
+
+exports.readTrash = (req, res) => {
+  const { id } = req.params;
+  const userId = req.userId; // from token
+
+  if (!userId) {
+    return res.status(401).json({ error: "Valid user-id is required" });
+  }
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ error: "Missing required fields - id of trash email" });
+  }
+
+  const userById = getUserById(userId);
+  const username = userById ? userById.username : null;
+
+  if (!userById) {
+    return res.status(404).json({ error: "User with this user-id not found" });
+  }
+
+  const trashMail = trashModel.getTrashById(id, username);
+  if (!trashMail) {
+    return res
+      .status(404)
+      .json({ error: "Trash email not found for this user" });
+  }
+
+  if (!trashModel.markReadTrash(trashMail)) {
+    return res
+      .status(500)
+      .json({ error: "Failed to mark trash email as read" });
+  }
+
+  return res.status(204).send();
+};
+
+exports.unreadTrash = (req, res) => {
+  const { id } = req.params;
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Valid user-id is required" });
+  }
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ error: "Missing required fields - id of trash email" });
+  }
+
+  const userById = getUserById(userId);
+  const username = userById ? userById.username : null;
+
+  if (!userById) {
+    return res.status(404).json({ error: "User with this user-id not found" });
+  }
+
+  const trashMail = trashModel.getTrashById(id, username);
+  if (!trashMail) {
+    return res
+      .status(404)
+      .json({ error: "Trash email not found for this user" });
+  }
+
+  if (!trashModel.markUnreadTrash(trashMail)) {
+    return res
+      .status(500)
+      .json({ error: "Failed to mark trash email as unread" });
+  }
+
+  return res.status(204).send();
+};
+
+exports.updateLabelsInTrash = (req, res) => {
+  const { id } = req.params;
+  const { labels = [] } = req.body;
+  const userId = req.userId; // from token
+
+  if (!userId) {
+    return res.status(401).json({ error: "user-id required in header" });
+  }
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ error: "Missing required fields - id of trash" });
+  }
+
+  const uniqueLabels = [...new Set(labels)];
+
+  const userById = getUserById(userId);
+  if (!userById) {
+    return res.status(404).json({ error: "User with this user-id not found" });
+  }
+  const username = userById.username;
+
+  const trashExists = trashModel.getTrashById(id, username);
+  if (!trashExists) {
+    return res.status(404).json({ error: "Trash not found for this user" });
+  }
+
+  const updated = trashModel.editLabelsInTrash(id, username, uniqueLabels);
+
+  if (!updated) {
+    return res.status(500).json({ error: "Failed to update labels in trash." });
+  }
+
+  return res.status(204).send();
+};
