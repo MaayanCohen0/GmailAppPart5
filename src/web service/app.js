@@ -14,11 +14,15 @@ const spamRoutes = require("./routes/spamsRoute");
 const trashRoutes = require("./routes/trashRoute");
 const searchAllRoutes = require("./routes/searchAllRoute");
 const objectsRoutes = require("./routes/objectsRoute");
+const connectDB = require("./config/db");
+require("dotenv").config();
 
 const cors = require("cors"); // add
 const app = express();
 const path = require("path");
 const { startTrashCleanup } = require("./utils/cronJobs");
+// Connect to MongoDB
+connectDB();
 
 // origin for CORS - use the port in .env file or default to 3000
 const corsPort = process.env.REACT_APP_FRONTEND_PORT || 3000;
