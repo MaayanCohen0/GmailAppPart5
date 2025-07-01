@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   phoneNumber: { type: String, required: true },
   birthDate: { type: Date, required: true },
   gender: { type: String, enum: ["male", "female", "other"], required: true },
-  profilePic: { type: String, default: "/uploads/default-avatar.png" },
+  profilePic: { type: String },
 });
 
 module.exports = mongoose.model("User", userSchema);
