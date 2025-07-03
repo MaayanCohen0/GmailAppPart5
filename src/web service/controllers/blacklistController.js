@@ -1,5 +1,5 @@
-const blacklistModel = require("../models/blacklistModel");
-const { getUserById } = require("../models/usersModel");
+const blacklistService = require("../services/blacklistService");
+const { getUserById } = require("../services/userService");
 
 exports.getUrls = (req, res) => {
   const userId = req.userId;
@@ -11,11 +11,10 @@ exports.getUrls = (req, res) => {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
 
-  res.json(blacklistModel.getUrls());
+  res.json(blacklistService.getUrls());
 };
 
 exports.addToBlacklist = async (req, res) => {
-  // check that user is registered and logged in
   const userId = req.userId;
   if (!userId) {
     return res.status(401).json({ error: "Valid user-id is required" });
@@ -28,15 +27,14 @@ exports.addToBlacklist = async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: "URL is required" });
 
-  if (blacklistModel.getUrls().some((item) => item.url === url)) {
+  if (blacklistService.getUrls().some((item) => item.url === url)) {
     return res.status(409).json({ error: "URL already exists in blacklist" });
   }
 
   try {
-    const result = await blacklistModel.addToBlacklist(url);
+    const result = await blacklistService.addToBlacklist(url);
     res.status(201).location(`/api/blacklist/${result.id}`).end();
   } catch (err) {
-    //res.status(400).json({ detail: err.message });
     if (err.message.includes("400 Bad Request")) {
       return res.status(400).end();
     }
@@ -48,7 +46,6 @@ exports.addToBlacklist = async (req, res) => {
 };
 
 exports.removeFromBlacklist = async (req, res) => {
-  // check that user is registered and logged in
   const userId = req.userId;
   if (!userId) {
     return res.status(401).json({ error: "Valid user-id is required" });
@@ -64,15 +61,11 @@ exports.removeFromBlacklist = async (req, res) => {
   }
 
   try {
-    const result = await blacklistModel.removeFromBlacklist(id);
+    const result = await blacklistService.removeFromBlacklist(id);
     if (!result) {
       return res.status(404).json({ error: "Url not found" });
     }
     res.status(204).end();
-    //res.json({ result });
-    // return res.status(200).json({
-    //   message: { id },
-    // });
   } catch (err) {
     res
       .status(500)
