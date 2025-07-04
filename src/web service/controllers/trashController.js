@@ -1,24 +1,24 @@
-const trashModel = require("../models/trashModel");
-const { getUserById } = require("../models/usersModel");
-const mailModel = require("../models/mailsModel");
+const trashService = require("../services/trashService");
+const { getUserById } = require("../services/userService");
+const mailService = require("../services/mailService");
 const draftModel = require("../models/draftsModel");
 const spamModel = require("../models/spamModel");
 
 // Get all trash mails of the user
-exports.getTrashMails = (req, res) => {
+exports.getTrashMails = async (req, res) => {
   const userId = req.userId;
   if (!userId) {
     return res.status(401).json({ error: "User ID is required" });
   }
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
   const username = user.username;
   try {
-    return res.status(200).json(trashModel.getAllTrashByUser(username));
+    return res.status(200).json(await trashService.getAllTrashByUser(username));
   } catch (e) {
     return res
       .status(500)
@@ -27,7 +27,7 @@ exports.getTrashMails = (req, res) => {
 };
 
 // Get one trash mail by ID
-exports.getTrashMailById = (req, res) => {
+exports.getTrashMailById = async (req, res) => {
   const userId = req.userId;
   const { id } = req.params;
 
@@ -35,13 +35,13 @@ exports.getTrashMailById = (req, res) => {
     return res.status(401).json({ error: "User ID is required" });
   }
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
   const username = user.username;
-  const mail = trashModel.getTrashById(id, username);
+  const mail = await trashService.getTrashById(id, username);
 
   if (!mail) {
     return res
@@ -53,7 +53,7 @@ exports.getTrashMailById = (req, res) => {
 };
 
 // Delete a trash mail permanently
-exports.deleteTrashMailById = (req, res) => {
+exports.deleteTrashMailById = async (req, res) => {
   const userId = req.userId;
   const { id } = req.params;
 
@@ -61,13 +61,13 @@ exports.deleteTrashMailById = (req, res) => {
     return res.status(401).json({ error: "User ID is required" });
   }
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
   const username = user.username;
-  const success = trashModel.finalDeleteTrashById(id, username);
+  const success = await trashService.finalDeleteTrashById(id, username);
 
   if (!success) {
     return res
@@ -79,7 +79,7 @@ exports.deleteTrashMailById = (req, res) => {
 };
 
 // Restore a trash mail to source
-exports.restoreTrashMail = (req, res) => {
+exports.restoreTrashMail = async (req, res) => {
   const userId = req.userId;
   const { id } = req.params;
 
@@ -87,13 +87,13 @@ exports.restoreTrashMail = (req, res) => {
     return res.status(401).json({ error: "User ID is required" });
   }
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
   const username = user.username;
-  const mail = trashModel.getTrashById(id, username);
+  const mail = await trashService.getTrashById(id, username);
 
   if (!mail) {
     return res
@@ -107,7 +107,7 @@ exports.restoreTrashMail = (req, res) => {
   // Determine destination and create copy
   switch (mail.trashSource) {
     case "inbox":
-      copiedMail = mailModel.createCopyOfMail(mail, username);
+      copiedMail = await mailService.createCopyOfMail(mail, username);
       destination = "inbox";
       break;
     case "drafts":
@@ -119,7 +119,7 @@ exports.restoreTrashMail = (req, res) => {
       destination = "spam";
       break;
     default:
-      copiedMail = mailModel.createCopyOfMail(mail, username);
+      copiedMail = await mailService.createCopyOfMail(mail, username);
       destination = "inbox";
   }
 
@@ -129,7 +129,7 @@ exports.restoreTrashMail = (req, res) => {
       .json({ error: `Failed to restore trash mail to ${destination}` });
   }
 
-  const success = trashModel.deleteTrashById(id, username);
+  const success = await trashService.deleteTrashById(id, username);
   if (!success) {
     return res.status(500).json({ error: "Failed to remove trash mail" });
   }
@@ -140,7 +140,7 @@ exports.restoreTrashMail = (req, res) => {
 };
 
 // Add a mail from inbox to trash
-exports.addToTrashFromInbox = (req, res) => {
+exports.addToTrashFromInbox = async (req, res) => {
   const userId = req.userId;
   const { id } = req.params;
 
@@ -148,20 +148,20 @@ exports.addToTrashFromInbox = (req, res) => {
     return res.status(401).json({ error: "User ID is required" });
   }
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
   const username = user.username;
-  const mail = mailModel.getMailById(id, username);
+  const mail = await mailService.getMailById(id, username);
 
   if (!mail) {
     return res.status(404).json({ error: "Mail not found for this user" });
   }
 
   try {
-    const result = mailModel.deleteMailById(id, username);
+    const result = await mailService.deleteMailById(id, username);
     if (!result) {
       return res
         .status(500)
@@ -175,7 +175,7 @@ exports.addToTrashFromInbox = (req, res) => {
   }
 
   try {
-    trashModel.addTrashMail(mail, "inbox");
+    await trashService.addTrashMail(mail, "inbox");
     return res
       .status(201)
       .json({ message: "Mail marked as trash", mail: mail });
@@ -188,7 +188,7 @@ exports.addToTrashFromInbox = (req, res) => {
 };
 
 // Add a mail from drafts to trash
-exports.addToTrashFromDraft = (req, res) => {
+exports.addToTrashFromDraft = async (req, res) => {
   const userId = req.userId;
   const { id } = req.params;
 
@@ -196,7 +196,7 @@ exports.addToTrashFromDraft = (req, res) => {
     return res.status(401).json({ error: "User ID is required" });
   }
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
@@ -223,7 +223,7 @@ exports.addToTrashFromDraft = (req, res) => {
   }
 
   try {
-    trashModel.addTrashMail(mail, "drafts");
+    await trashService.addTrashMail(mail, "drafts");
     return res
       .status(201)
       .json({ message: "Mail marked as trash", mail: mail });
@@ -236,7 +236,7 @@ exports.addToTrashFromDraft = (req, res) => {
 };
 
 // Add a mail from spam to trash
-exports.addToTrashFromSpam = (req, res) => {
+exports.addToTrashFromSpam = async (req, res) => {
   const userId = req.userId;
   const { id } = req.params;
 
@@ -244,7 +244,7 @@ exports.addToTrashFromSpam = (req, res) => {
     return res.status(401).json({ error: "User ID is required" });
   }
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
@@ -269,7 +269,7 @@ exports.addToTrashFromSpam = (req, res) => {
   }
 
   try {
-    trashModel.addTrashMail(mail, "spam");
+    await trashService.addTrashMail(mail, "spam");
     return res
       .status(201)
       .json({ message: "Mail marked as trash", mail: mail });
@@ -281,7 +281,7 @@ exports.addToTrashFromSpam = (req, res) => {
   }
 };
 
-exports.readTrash = (req, res) => {
+exports.readTrash = async (req, res) => {
   const { id } = req.params;
   const userId = req.userId; // from token
 
@@ -295,21 +295,21 @@ exports.readTrash = (req, res) => {
       .json({ error: "Missing required fields - id of trash email" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   const username = userById ? userById.username : null;
 
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
 
-  const trashMail = trashModel.getTrashById(id, username);
+  const trashMail = await trashService.getTrashById(id, username);
   if (!trashMail) {
     return res
       .status(404)
       .json({ error: "Trash email not found for this user" });
   }
 
-  if (!trashModel.markReadTrash(trashMail)) {
+  if (!( await trashService .markReadTrash(trashMail))) {
     return res
       .status(500)
       .json({ error: "Failed to mark trash email as read" });
@@ -318,7 +318,7 @@ exports.readTrash = (req, res) => {
   return res.status(204).send();
 };
 
-exports.unreadTrash = (req, res) => {
+exports.unreadTrash = async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
 
@@ -332,21 +332,21 @@ exports.unreadTrash = (req, res) => {
       .json({ error: "Missing required fields - id of trash email" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   const username = userById ? userById.username : null;
 
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
 
-  const trashMail = trashModel.getTrashById(id, username);
+  const trashMail = await trashService.getTrashById(id, username);
   if (!trashMail) {
     return res
       .status(404)
       .json({ error: "Trash email not found for this user" });
   }
 
-  if (!trashModel.markUnreadTrash(trashMail)) {
+  if (!( await trashService.markUnreadTrash(trashMail))) {
     return res
       .status(500)
       .json({ error: "Failed to mark trash email as unread" });
@@ -355,7 +355,7 @@ exports.unreadTrash = (req, res) => {
   return res.status(204).send();
 };
 
-exports.updateLabelsInTrash = (req, res) => {
+exports.updateLabelsInTrash = async (req, res) => {
   const { id } = req.params;
   const { labels = [] } = req.body;
   const userId = req.userId; // from token
@@ -372,18 +372,18 @@ exports.updateLabelsInTrash = (req, res) => {
 
   const uniqueLabels = [...new Set(labels)];
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
   const username = userById.username;
 
-  const trashExists = trashModel.getTrashById(id, username);
+  const trashExists = await trashService.getTrashById(id, username);
   if (!trashExists) {
     return res.status(404).json({ error: "Trash not found for this user" });
   }
 
-  const updated = trashModel.editLabelsInTrash(id, username, uniqueLabels);
+  const updated = await trashService.editLabelsInTrash(id, username, uniqueLabels);
 
   if (!updated) {
     return res.status(500).json({ error: "Failed to update labels in trash." });
