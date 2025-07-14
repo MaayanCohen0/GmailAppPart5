@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -53,5 +54,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-livedata:2.6.2")
 
 }

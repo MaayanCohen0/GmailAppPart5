@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MyEmailApp</string>
-
+    <string name="login">Login</string>
+    <string name="logging_in">Logging in...</string>
 
 
     <string name="step_name">Enter Your Name</string>
@@ -65,12 +66,13 @@
     <string name="subject_placeholder">Subject</string>
     <string name="snippet_placeholder">Snippet</string>
     <string name="date_placeholder">Date</string>
+
     <string name="btn_reply">Reply</string>
     <string name="btn_forward">Forward</string>
     <string name="btn_delete">Delete</string>
     <string name="btn_restore">Restore</string>
     <string name="btn_permanent_delete">Delete Permanently</string>
-
+    <string name="star_btn">Star</string>
 
     <string name="body_placeholder">Body</string>
     <string name="labels_placeholder">Labels</string>

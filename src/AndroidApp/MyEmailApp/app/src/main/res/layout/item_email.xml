@@ -11,6 +11,16 @@
     android:layout_margin="4dp">
 
     <!-- First line: Sender's name (bold and bigger font) -->
+    <ImageButton
+        android:id="@+id/button_star"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/star_filled"
+        android:contentDescription="@string/star_btn"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        android:layout_marginEnd="4dp"/>
+
     <TextView
         android:id="@+id/text_from"
         android:layout_width="match_parent"

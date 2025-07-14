@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MonAppEmail</string>
+    <string name="login">Se connecter</string>
+    <string name="logging_in">Connexion en cours...</string>
 
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
@@ -84,7 +86,7 @@
     <string name="btn_mark_unread">Marquer comme non lu</string>
     <string name="btn_spam">Marquer comme spam</string>
     <string name="btn_labels">Ajouter des étiquettes</string>
-
+    <string name="star_btn">Star</string>
 
 
     <string name="nav_home">Accueil</string>

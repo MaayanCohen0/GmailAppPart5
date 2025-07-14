@@ -32,11 +32,14 @@ public class Email {
     @SerializedName("trashSource")
     private String trashSource;
 
+    @SerializedName("isStarred")
+    private boolean isStarred;
+
     // Constructors
     public Email() {}
 
     public Email(String id, String from, List<String> to, String subject, String body,
-                 String timeStamp, boolean isRead, List<String> labels) {
+                 String timeStamp, boolean isRead, List<String> labels, boolean isStarred) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -45,15 +48,28 @@ public class Email {
         this.timeStamp = timeStamp;
         this.isRead = isRead;
         this.labels = labels;
+        this.isStarred = isStarred;
     }
 
     // Optional constructor with trashSource
     public Email(String id, String from, List<String> to, String subject, String body,
-                 String timeStamp, boolean isRead, List<String> labels, String trashSource) {
-        this(id, from, to, subject, body, timeStamp, isRead, labels);
+                 String timeStamp, boolean isRead, List<String> labels, boolean isStarred, String trashSource) {
+        this(id, from, to, subject, body, timeStamp, isRead, labels, isStarred);
         this.trashSource = trashSource;
     }
 
+    public Email(Email other) {
+        this.id = other.id;
+        this.from = other.from;
+        this.to = other.to != null ? List.copyOf(other.to) : null; // Defensive copy
+        this.subject = other.subject;
+        this.body = other.body;
+        this.timeStamp = other.timeStamp;
+        this.isRead = other.isRead;
+        this.labels = other.labels != null ? List.copyOf(other.labels) : null; // Defensive copy
+        this.isStarred = other.isStarred;
+        this.trashSource = other.trashSource;
+    }
     // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -86,6 +102,12 @@ public class Email {
         return trashSource != null;
     }
 
+    public boolean isStarred() {
+        return isStarred;
+    }
+    public void setStarred(boolean val) {
+        isStarred = val;
+    }
     @Override
     public String toString() {
         return "Email{" +

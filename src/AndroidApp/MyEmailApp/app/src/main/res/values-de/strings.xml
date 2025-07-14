@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MeineEmailApp</string>
-
+    <string name="login">Anmelden</string>
+    <string name="logging_in">Melde dich an...</string>
 
     <string name="step_name">Geben Sie Ihren Namen ein</string>
     <string name="step_birth">Geburtsdatum &amp; Geschlecht</string>
@@ -13,7 +14,7 @@
     <string name="btn_next">Weiter</string>
     <string name="btn_back_to_login">Zurück zum Login</string>
     <string name="btn_back">Zurück</string>
-
+    <string name="star_btn">Star</string>
 
 
     <string name="error_first_name_required">Vorname ist erforderlich</string>
