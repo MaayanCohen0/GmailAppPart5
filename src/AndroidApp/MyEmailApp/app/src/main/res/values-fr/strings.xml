@@ -120,6 +120,8 @@
     <string name="empty_inbox_text">no mails in inbox yet</string>
     <string name="sent_title">Sent</string>
     <string name="empty_sent_text">No sent mails yet</string>
+    <string name="labels_section">Labels</string>
+    <string name="nav_view_labels">Labels</string>
 
     <!--    <string name="step_name_title">Entrez votre nom</string>-->
 <!--    <string name="step_birth_title">Date de naissance et genre</string>-->

@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myemailapp.fragments.LabelsFragment;
 import com.example.myemailapp.ui.login.LoginActivity;
 import com.example.myemailapp.fragments.HomeFragment;
 import com.example.myemailapp.fragments.InboxFragment;
@@ -291,6 +292,12 @@ private void updateNavigationHeader() {
             logout();
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
+        } else if (id == R.id.viewLabels) {
+            // Navigate to Labels Fragment
+//            navigateToLabels();
+            fragment = new LabelsFragment();
+            title = getString(R.string.nav_view_labels);
+            fragmentTag = "labels";
         }
 
         if (fragment != null && !fragmentTag.equals(currentFragment)) {

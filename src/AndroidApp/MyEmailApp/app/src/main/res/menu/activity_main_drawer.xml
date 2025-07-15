@@ -30,6 +30,16 @@
             android:title="@string/nav_trash" />
     </group>
 
+    <item android:title="@string/labels_section">
+        <menu>
+            <item
+                android:id="@+id/viewLabels"
+                android:icon="@drawable/ic_labels"
+                android:title="@string/nav_view_labels" />
+        </menu>
+
+    </item>
+
     <item android:title="@string/account_section">
         <menu>
             <item
