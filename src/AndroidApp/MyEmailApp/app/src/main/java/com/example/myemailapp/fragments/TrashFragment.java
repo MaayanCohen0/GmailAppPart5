@@ -39,7 +39,7 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
     private RecyclerView recyclerView;
     private EmailAdapter emailAdapter;
     private TextView emptyText;
-    private TextView titleText;
+//    private TextView titleText;
     private Handler handler;
     private Runnable refreshRunnable;
 
@@ -85,7 +85,7 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
     private void initializeViews(View view) {
         recyclerView = view.findViewById(R.id.recycler_view_trash);
         emptyText = view.findViewById(R.id.empty_trash_text);
-        titleText = view.findViewById(R.id.trash_title);
+//        titleText = view.findViewById(R.id.trash_title);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -200,11 +200,11 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
             if (shouldShowEmpty) {
                 emptyText.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
-                titleText.setVisibility(View.GONE);
+//                titleText.setVisibility(View.GONE);
             } else {
                 emptyText.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
-                titleText.setVisibility(View.VISIBLE);
+//                titleText.setVisibility(View.VISIBLE);
             }
         });
 

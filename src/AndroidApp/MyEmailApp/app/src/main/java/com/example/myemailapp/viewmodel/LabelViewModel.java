@@ -1,62 +1,15 @@
-//package com.example.myemailapp.viewmodel;
-//
-//import android.app.Application;
-//import android.content.SharedPreferences;
-//import androidx.annotation.NonNull;
-//import androidx.lifecycle.AndroidViewModel;
-//import androidx.lifecycle.LiveData;
-//import androidx.lifecycle.MutableLiveData;
-//import com.example.myemailapp.repository.LabelRepository;
-//import java.util.List;
-//import static android.content.Context.MODE_PRIVATE;
-//
-//public class LabelViewModel extends AndroidViewModel {
-//    private static final String TAG = "LabelViewModel";
-//
-//    private LabelRepository labelRepository;
-//
-//    public LabelViewModel(@NonNull Application application) {
-//        super(application);
-//
-//        // Get auth token
-//        SharedPreferences prefs = application.getSharedPreferences("auth", MODE_PRIVATE);
-//        String authToken = prefs.getString("jwt", "");
-//
-//        // Initialize repository
-//        labelRepository = LabelRepository.getInstance(application, authToken);
-//    }
-//
-//    public LiveData<List<String>> getLabels() {
-//        return labelRepository.getLabels();
-//    }
-//
-//    public LiveData<String> getErrorMessage() {
-//        return labelRepository.getError();
-//    }
-//
-//    public LiveData<Boolean> getIsLoading() {
-//        return labelRepository.getIsLoading();
-//    }
-//
-//    public void loadLabels() {
-//        labelRepository.loadLabels();
-//    }
-//
-//    public void refreshLabels() {
-//        labelRepository.refreshLabels();
-//    }
-//}
-
 package com.example.myemailapp.viewmodel;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.example.myemailapp.data.database.entity.Label;
 import com.example.myemailapp.repository.LabelRepository;
 import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
@@ -70,44 +23,95 @@ public class LabelViewModel extends AndroidViewModel {
     private Runnable refreshRunnable;
     private boolean isPeriodicRefreshActive = false;
 
+    // Add fallback error handling
+    private final MutableLiveData<String> initializationError = new MutableLiveData<>();
+
     public LabelViewModel(@NonNull Application application) {
         super(application);
 
-        // Get auth token
-        SharedPreferences prefs = application.getSharedPreferences("auth", MODE_PRIVATE);
-        String authToken = prefs.getString("jwt", "");
+        try {
+            // Get auth token
+            SharedPreferences prefs = application.getSharedPreferences("auth", MODE_PRIVATE);
+            String authToken = prefs.getString("jwt", "");
 
-        // Initialize repository
-        labelRepository = LabelRepository.getInstance(application, authToken);
+            // Initialize repository
+            labelRepository = LabelRepository.getInstance(application, authToken);
 
-        // Initialize handler for periodic refresh
-        handler = new Handler(Looper.getMainLooper());
+            // Initialize handler for periodic refresh
+            handler = new Handler(Looper.getMainLooper());
+
+            Log.d(TAG, "LabelViewModel initialized successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing LabelViewModel", e);
+            initializationError.setValue("Failed to initialize: " + e.getMessage());
+        }
     }
 
+    /**
+     * Get labels as List<String> - maintains compatibility with existing code
+     */
     public LiveData<List<String>> getLabels() {
-        return labelRepository.getLabels();
+        if (labelRepository != null) {
+            return labelRepository.getLabels();
+        } else {
+            return new MutableLiveData<>();
+        }
+    }
+
+    /**
+     * Get labels as Label entities - for when you need full Label objects
+     */
+    public LiveData<List<Label>> getLabelEntities() {
+        if (labelRepository != null) {
+            return labelRepository.getLabelEntities();
+        } else {
+            return new MutableLiveData<>();
+        }
     }
 
     public LiveData<String> getErrorMessage() {
-        return labelRepository.getError();
+        if (labelRepository != null) {
+            return labelRepository.getError();
+        } else {
+            return initializationError;
+        }
     }
 
     public LiveData<Boolean> getIsLoading() {
-        return labelRepository.getIsLoading();
+        if (labelRepository != null) {
+            return labelRepository.getIsLoading();
+        } else {
+            MutableLiveData<Boolean> fallback = new MutableLiveData<>();
+            fallback.setValue(false);
+            return fallback;
+        }
     }
 
     public void loadLabels() {
-        labelRepository.loadLabels();
+        if (labelRepository != null) {
+            labelRepository.loadLabels();
+        } else {
+            Log.e(TAG, "Cannot load labels - repository not initialized");
+        }
     }
 
     public void refreshLabels() {
-        labelRepository.refreshLabels();
+        if (labelRepository != null) {
+            labelRepository.refreshLabels();
+        } else {
+            Log.e(TAG, "Cannot refresh labels - repository not initialized");
+        }
     }
 
     /**
      * Start periodic refresh of labels
      */
     public void startPeriodicRefresh() {
+        if (labelRepository == null) {
+            Log.e(TAG, "Cannot start periodic refresh - repository not initialized");
+            return;
+        }
+
         if (isPeriodicRefreshActive) {
             return; // Already running
         }
@@ -116,7 +120,7 @@ public class LabelViewModel extends AndroidViewModel {
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
-                if (isPeriodicRefreshActive) {
+                if (isPeriodicRefreshActive && labelRepository != null) {
                     labelRepository.refreshLabels();
                     handler.postDelayed(this, REFRESH_INTERVAL);
                 }
@@ -151,6 +155,17 @@ public class LabelViewModel extends AndroidViewModel {
      */
     public boolean isPeriodicRefreshActive() {
         return isPeriodicRefreshActive;
+    }
+
+    /**
+     * Clear all labels from local database
+     */
+    public void clearLabels() {
+        if (labelRepository != null) {
+            labelRepository.clearLabels();
+        } else {
+            Log.e(TAG, "Cannot clear labels - repository not initialized");
+        }
     }
 
     @Override

@@ -123,8 +123,12 @@
 
     <string name="network_error">Netzwerkfehler: %1$s</string>
     <string name="username_not_available">Bitte wählen Sie einen anderen Benutzernamen</string>
+    <string name="inbox_title">inbox</string>
+    <string name="empty_inbox_text">no mails in inbox yet</string>
+    <string name="sent_title">Sent</string>
+    <string name="empty_sent_text">No sent mails yet</string>
 
-<!--    <string name="step_name_title">Geben Sie Ihren Namen ein</string>-->
+    <!--    <string name="step_name_title">Geben Sie Ihren Namen ein</string>-->
 <!--    <string name="step_birth_title">Geburtsdatum und Geschlecht</string>-->
 <!--    <string name="step_username_title">Benutzernamen wählen</string>-->
 <!--    <string name="step_password_title">Passwort erstellen</string>-->

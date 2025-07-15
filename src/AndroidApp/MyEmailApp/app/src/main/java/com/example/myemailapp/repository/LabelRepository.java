@@ -2,34 +2,43 @@ package com.example.myemailapp.repository;
 
 import android.content.Context;
 import android.util.Log;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.lifecycle.Transformations;
+import com.example.myemailapp.data.database.entity.Label;
+import com.example.myemailapp.data.database.network.LabelApiService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LabelRepository {
     private static final String TAG = "LabelRepository";
     private static LabelRepository instance;
-    private final Context context;
-    private final String baseUrl;
-    private final String token;
 
-    private MutableLiveData<List<String>> labelsLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> errorLiveData = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>();
+    private final LabelApiService apiService;
+    private final ExecutorService executor;
+
+    private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>();
+
+    // Store labels in memory instead of database
+    private final MutableLiveData<List<Label>> labelsLiveData = new MutableLiveData<>();
 
     private LabelRepository(Context context, String token) {
-        this.context = context.getApplicationContext();
-        this.token = token;
-        this.baseUrl = "http://10.0.2.2:8080/api"; // Adjust port as needed
+        try {
+            apiService = new LabelApiService(context, token);
+            executor = Executors.newFixedThreadPool(4);
+
+            // Initialize with empty list
+            labelsLiveData.setValue(new ArrayList<>());
+
+            Log.d(TAG, "LabelRepository initialized successfully (no database)");
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing LabelRepository", e);
+            throw new RuntimeException("Failed to initialize LabelRepository", e);
+        }
     }
 
     public static synchronized LabelRepository getInstance(Context context, String token) {
@@ -39,109 +48,98 @@ public class LabelRepository {
         return instance;
     }
 
-    public MutableLiveData<List<String>> getLabels() {
+    /**
+     * Returns LiveData<List<String>> to maintain compatibility with existing code
+     */
+    public LiveData<List<String>> getLabels() {
+        return Transformations.map(labelsLiveData, labels -> {
+            if (labels != null) {
+                List<String> labelNames = new ArrayList<>();
+                for (Label label : labels) {
+                    labelNames.add(label.getName());
+                }
+                return labelNames;
+            }
+            return new ArrayList<>();
+        });
+    }
+
+    /**
+     * Returns LiveData<List<Label>> for when you need full Label objects
+     */
+    public LiveData<List<Label>> getLabelEntities() {
         return labelsLiveData;
     }
 
-    public MutableLiveData<String> getError() {
+    public LiveData<String> getError() {
         return errorLiveData;
     }
 
-    public MutableLiveData<Boolean> getIsLoading() {
+    public LiveData<Boolean> getIsLoading() {
         return isLoadingLiveData;
     }
 
-//    public void loadLabels() {
-//        isLoadingLiveData.postValue(true);
-//
-//        String url = baseUrl + "/labels"; // Adjust endpoint as needed
-//
-//        JsonArrayRequest request = new JsonArrayRequest(
-//                Request.Method.GET,
-//                url,
-//                null,
-//                response -> {
-//                    try {
-//                        List<String> labels = new ArrayList<>();
-//                        for (int i = 0; i < response.length(); i++) {
-//                            labels.add(response.getString(i));
-//                        }
-//                        labelsLiveData.postValue(labels);
-//                        Log.d(TAG, "Labels loaded successfully: " + labels.size() + " labels");
-//                    } catch (JSONException e) {
-//                        Log.e(TAG, "Error parsing labels response", e);
-//                        errorLiveData.postValue("Failed to parse labels: " + e.getMessage());
-//                    } finally {
-//                        isLoadingLiveData.postValue(false);
-//                    }
-//                },
-//                error -> {
-//                    Log.e(TAG, "Error loading labels", error);
-//                    String errorMessage = "Failed to load labels";
-//                    if (error.networkResponse != null) {
-//                        errorMessage += " (Status: " + error.networkResponse.statusCode + ")";
-//                    }
-//                    errorLiveData.postValue(errorMessage);
-//                    isLoadingLiveData.postValue(false);
-//                }
-//        ) {
-//            @Override
-//            public Map<String, String> getHeaders() {
-//                Map<String, String> headers = new HashMap<>();
-//                headers.put("Authorization", "Bearer " + token);
-//                return headers;
-//            }
-//        };
-//
-//        Volley.newRequestQueue(context).add(request);
-//    }
-public void loadLabels() {
-    isLoadingLiveData.postValue(true);
+    public void loadLabels() {
+        // Since we don't have a database, always fetch from API
+        fetchFromApi();
+    }
 
-    String url = baseUrl + "/labels"; // Adjust endpoint as needed
+    public void refreshLabels() {
+        fetchFromApi();
+    }
 
-    JsonArrayRequest request = new JsonArrayRequest(
-            Request.Method.GET,
-            url,
-            null,
-            response -> {
+    private void fetchFromApi() {
+        isLoadingLiveData.postValue(true);
 
-                try {
-                    List<String> labels = new ArrayList<>();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        labels.add(jsonObject.getString("name"));
-                    }
-                    labelsLiveData.postValue(labels);
-                    Log.d(TAG, "Labels loaded successfully: " + labels.size() + " labels");
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing labels response", e);
-                    errorLiveData.postValue("Failed to parse labels: " + e.getMessage());
-                } finally {
-                    isLoadingLiveData.postValue(false);
-                }
-            },
-            error -> {
-                Log.e(TAG, "Error loading labels", error);
-                String errorMessage = "Failed to load labels";
-                if (error.networkResponse != null) {
-                    errorMessage += " (Status: " + error.networkResponse.statusCode + ")";
-                }
-                errorLiveData.postValue(errorMessage);
+        apiService.fetchLabels(new LabelApiService.ApiCallback<List<Label>>() {
+            @Override
+            public void onSuccess(List<Label> labels) {
+                // Store in memory instead of database
+                labelsLiveData.postValue(labels);
+                isLoadingLiveData.postValue(false);
+                Log.d(TAG, "Labels fetched and stored in memory: " + labels.size() + " labels");
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
                 isLoadingLiveData.postValue(false);
             }
-    ) {
-        @Override
-        public Map<String, String> getHeaders() {
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Authorization", "Bearer " + token);
-            return headers;
-        }
-    };
+        });
+    }
 
-    Volley.newRequestQueue(context).add(request);
-}
-    public void refreshLabels() {
-        loadLabels();
+    /**
+     * Add a single label (stored in memory only)
+     */
+    public void addLabel(Label label) {
+        List<Label> currentLabels = labelsLiveData.getValue();
+        if (currentLabels != null) {
+            List<Label> updatedLabels = new ArrayList<>(currentLabels);
+            updatedLabels.add(label);
+            labelsLiveData.postValue(updatedLabels);
+        }
+    }
+
+    /**
+     * Delete a label (from memory only)
+     */
+    public void deleteLabel(String labelId) {
+        List<Label> currentLabels = labelsLiveData.getValue();
+        if (currentLabels != null) {
+            List<Label> updatedLabels = new ArrayList<>();
+            for (Label label : currentLabels) {
+                if (!label.getId().equals(labelId)) {
+                    updatedLabels.add(label);
+                }
+            }
+            labelsLiveData.postValue(updatedLabels);
+        }
+    }
+
+    /**
+     * Clear all labels from memory
+     */
+    public void clearLabels() {
+        labelsLiveData.postValue(new ArrayList<>());
     }
 }

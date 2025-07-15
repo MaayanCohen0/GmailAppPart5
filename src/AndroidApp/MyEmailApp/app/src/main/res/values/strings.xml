@@ -127,8 +127,12 @@
     <string name="draft_prefix">Draft: %1$s</string>
     <string name="mark_read">Mark Read</string>
     <string name="mark_unread">Mark Unread</string>
+    <string name="inbox_title">inbox</string>
+    <string name="empty_inbox_text">no mails in inbox yet</string>
+    <string name="sent_title">Sent</string>
+    <string name="empty_sent_text">No sent mails yet</string>
 
-<!--    <string name="step_name_title">Enter Your Name</string>-->
+    <!--    <string name="step_name_title">Enter Your Name</string>-->
 <!--    <string name="step_birth_title">Birth Date & Gender</string>-->
 <!--    <string name="step_username_title">Choose Username</string>-->
 <!--    <string name="step_password_title">Create Password</string>-->

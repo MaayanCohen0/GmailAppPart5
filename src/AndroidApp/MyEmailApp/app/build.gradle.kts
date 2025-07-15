@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.volley)
+    implementation(libs.room.common.jvm)
+    implementation(libs.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -1,49 +1,348 @@
 package com.example.myemailapp.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class InboxFragment extends Fragment {
+import com.example.myemailapp.R;
+import com.example.myemailapp.adapters.EmailAdapter;
+import com.example.myemailapp.model.Email;
+import com.example.myemailapp.utils.EmailActionHandler;
+import com.example.myemailapp.utils.EmailListManager;
+import com.example.myemailapp.viewmodel.InboxViewModel;
+import com.example.myemailapp.viewmodel.LabelViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
+
+public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListUpdateListener {
+    private static final String TAG = "InboxFragment";
+    private static final long REFRESH_INTERVAL = 2000; // 2 seconds
+
+    private RecyclerView recyclerView;
+    private EmailAdapter emailAdapter;
+    private TextView emptyText;
+//    private TextView titleText;
+    private Handler handler;
+    private Runnable refreshRunnable;
+
+    private InboxViewModel inboxViewModel;
+    private LabelViewModel labelViewModel;
+    private List<Email> inboxEmails = new ArrayList<>();
+    private List<String> availableLabels = new ArrayList<>();
+    private EmailActionHandler actionHandler;
+    private String authToken;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Create the layout programmatically
-        LinearLayout layout = new LinearLayout(getContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(40, 60, 40, 40);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        // Title
-        TextView titleText = new TextView(getContext());
-        titleText.setText("📥 Inbox");
-        titleText.setTextSize(24);
-        titleText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        titleText.setPadding(0, 0, 0, 30);
-        titleText.setTextColor(0xFF4CAF50); // Green color
+        // Get auth token
+        SharedPreferences prefs = requireContext().getSharedPreferences("auth", MODE_PRIVATE);
+        authToken = prefs.getString("jwt", "");
 
-        // Content
-        TextView contentText = new TextView(getContext());
-        contentText.setText("Your inbox is currently empty.\n\nNew emails will appear here when received.");
-        contentText.setTextSize(16);
-        contentText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        contentText.setLineSpacing(8, 1.2f);
+        // Initialize universal action handler
+        actionHandler = new EmailActionHandler(requireContext(), authToken);
 
-        // Add sample emails (you can replace this with real data later)
-        TextView sampleEmails = new TextView(getContext());
-        sampleEmails.setText("\n\n📧 Sample Email 1\nFrom: example@email.com\nSubject: Welcome to Email App\n\n📧 Sample Email 2\nFrom: notifications@app.com\nSubject: Your account is ready");
-        sampleEmails.setTextSize(14);
-        sampleEmails.setPadding(20, 20, 20, 20);
-        sampleEmails.setBackgroundColor(0xFFF5F5F5); // Light gray background
+        // Initialize ViewModels
+        inboxViewModel = new ViewModelProvider(this).get(InboxViewModel.class);
+        labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
+    }
 
-        layout.addView(titleText);
-        layout.addView(contentText);
-        layout.addView(sampleEmails);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_inbox, container, false);
 
-        return layout;
+        initializeViews(view);
+        setupRecyclerView();
+        setupObservers();
+
+        // Load initial data
+        inboxViewModel.loadInboxEmails();
+        labelViewModel.loadLabels();
+
+        return view;
+    }
+
+    private void initializeViews(View view) {
+        recyclerView = view.findViewById(R.id.recycler_view_inbox);
+        emptyText = view.findViewById(R.id.empty_inbox_text);
+//        titleText = view.findViewById(R.id.inbox_title);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    private void setupRecyclerView() {
+        emailAdapter = new EmailAdapter(inboxEmails, new EmailAdapter.OnEmailClickListener() {
+            @Override
+            public void onEmailClick(Email email) {
+                // Handle email click if needed
+            }
+
+            @Override
+            public void onRestoreClick(Email email) {
+                // Inbox emails typically don't have a restore action
+            }
+
+            @Override
+            public void onDeleteClick(Email email) {
+                // Use universal action handler for delete
+                actionHandler.deleteEmail(email.getId(), new EmailActionHandler.ActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        onEmailRemoved(email.getId());
+                        actionHandler.showToast("Email deleted");
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        actionHandler.showToast("Delete failed: " + error);
+                    }
+                });
+            }
+
+            @Override
+            public void onMarkReadClick(Email email) {
+                // Use universal action handler for mark as read
+                actionHandler.markAsRead(email.getId(), new EmailActionHandler.ActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        onEmailReadStatusChanged(email.getId(), true);
+                        actionHandler.showToast("Marked as read");
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        actionHandler.showToast("Mark as read failed: " + error);
+                    }
+                });
+            }
+
+            @Override
+            public void onMarkUnreadClick(Email email) {
+                // Use universal action handler for mark as unread
+                actionHandler.markAsUnread(email.getId(), new EmailActionHandler.ActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        onEmailReadStatusChanged(email.getId(), false);
+                        actionHandler.showToast("Marked as unread");
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        actionHandler.showToast("Mark as unread failed: " + error);
+                    }
+                });
+            }
+
+            @Override
+            public void onSpamClick(Email email) {
+                // Use universal action handler for spam
+                actionHandler.markAsSpam(email.getId(), new EmailActionHandler.ActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        onEmailRemoved(email.getId());
+                        actionHandler.showToast("Marked as spam");
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        actionHandler.showToast("Mark as spam failed: " + error);
+                    }
+                });
+            }
+
+            @Override
+            public void onLabelsClick(Email email) {
+                showEditLabelsDialog(email);
+            }
+        }, false, actionHandler, this); // Pass false for isTrash, and pass action handler and listener
+
+        recyclerView.setAdapter(emailAdapter);
+    }
+
+    private void setupObservers() {
+        // Observe inbox emails
+        inboxViewModel.getInboxEmails().observe(getViewLifecycleOwner(), emails -> {
+            if (emails != null) {
+                inboxEmails.clear();
+                inboxEmails.addAll(emails);
+                emailAdapter.notifyDataSetChanged();
+
+                // Update empty state
+                inboxViewModel.updateEmptyState(emails);
+
+                Log.d(TAG, "Updated inbox emails: " + emails.size() + " items");
+            }
+        });
+
+        // Observe empty state
+        inboxViewModel.getShouldShowEmpty().observe(getViewLifecycleOwner(), shouldShowEmpty -> {
+            if (shouldShowEmpty) {
+                emptyText.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+//                titleText.setVisibility(View.GONE);
+            } else {
+                emptyText.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+//                titleText.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Observe error messages
+        inboxViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Inbox Error: " + error);
+            }
+        });
+
+        // Observe loading state
+        inboxViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            Log.d(TAG, "Inbox Loading state: " + isLoading);
+        });
+
+        // Observe labels from LabelViewModel
+        labelViewModel.getLabels().observe(getViewLifecycleOwner(), labels -> {
+            if (labels != null) {
+                availableLabels.clear();
+                availableLabels.addAll(labels);
+                Log.d(TAG, "Available labels updated: " + labels.size() + " labels");
+            }
+        });
+
+        // Observe label errors
+        labelViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(getContext(), "Labels: " + error, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Label Error: " + error);
+            }
+        });
+
+        // Observe label loading state
+        labelViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            Log.d(TAG, "Labels Loading state: " + isLoading);
+        });
+    }
+
+    private void showEditLabelsDialog(Email email) {
+        if (availableLabels.isEmpty()) {
+            Toast.makeText(getContext(), "Loading labels...", Toast.LENGTH_SHORT).show();
+            labelViewModel.refreshLabels();
+            return;
+        }
+
+        String[] allLabels = availableLabels.toArray(new String[0]);
+        boolean[] checked = new boolean[allLabels.length];
+        List<String> currentLabels = email.getLabels();
+
+        for (int i = 0; i < allLabels.length; i++) {
+            checked[i] = currentLabels != null && currentLabels.contains(allLabels[i]);
+        }
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Edit Labels")
+                .setMultiChoiceItems(allLabels, checked, (dialog, which, isChecked) -> {
+                    checked[which] = isChecked;
+                })
+                .setPositiveButton("OK", (dialog, which) -> {
+                    List<String> newLabels = new ArrayList<>();
+                    for (int i = 0; i < allLabels.length; i++) {
+                        if (checked[i]) {
+                            newLabels.add(allLabels[i]);
+                        }
+                    }
+
+                    actionHandler.saveLabels(email.getId(), newLabels, new EmailActionHandler.ActionCallback() {
+                        @Override
+                        public void onSuccess() {
+                            onEmailLabelsChanged(email.getId(), newLabels);
+                            actionHandler.showToast("Labels updated successfully");
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            actionHandler.showToast("Labels update failed: " + error);
+                        }
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    @Override
+    public void onEmailRemoved(String emailId) {
+        inboxEmails = EmailListManager.removeEmailFromList(inboxEmails, emailId);
+        emailAdapter.updateEmailList(inboxEmails);
+        inboxViewModel.updateEmptyState(inboxEmails);
+    }
+
+    @Override
+    public void onEmailReadStatusChanged(String emailId, boolean isRead) {
+        inboxEmails = EmailListManager.updateEmailReadStatus(inboxEmails, emailId, isRead);
+        emailAdapter.updateEmailList(inboxEmails);
+    }
+
+    @Override
+    public void onEmailStarStatusChanged(String emailId, boolean isStarred) {
+        inboxEmails = EmailListManager.updateEmailStarStatus(inboxEmails, emailId, isStarred);
+        emailAdapter.updateEmailList(inboxEmails);
+    }
+
+    @Override
+    public void onEmailLabelsChanged(String emailId, List<String> labels) {
+        inboxEmails = EmailListManager.updateEmailLabels(inboxEmails, emailId, labels);
+        emailAdapter.updateEmailList(inboxEmails);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        inboxViewModel.loadInboxEmails();
+        labelViewModel.loadLabels();
+        startPeriodicRefresh();
+        labelViewModel.startPeriodicRefresh();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopPeriodicRefresh();
+        labelViewModel.stopPeriodicRefresh();
+    }
+
+    private void startPeriodicRefresh() {
+        handler = new Handler();
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                inboxViewModel.loadInboxEmails();
+                handler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        };
+        handler.postDelayed(refreshRunnable, REFRESH_INTERVAL);
+    }
+
+    private void stopPeriodicRefresh() {
+        if (handler != null && refreshRunnable != null) {
+            handler.removeCallbacks(refreshRunnable);
+        }
     }
 }

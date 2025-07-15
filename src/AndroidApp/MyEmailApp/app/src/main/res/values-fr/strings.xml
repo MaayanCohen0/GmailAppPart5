@@ -116,8 +116,12 @@
     <string name="draft_prefix">Brouillon : %1$s</string>
     <string name="mark_read">Marquer comme lu</string>
     <string name="mark_unread">Marquer comme non lu</string>
+    <string name="inbox_title">inbox</string>
+    <string name="empty_inbox_text">no mails in inbox yet</string>
+    <string name="sent_title">Sent</string>
+    <string name="empty_sent_text">No sent mails yet</string>
 
-<!--    <string name="step_name_title">Entrez votre nom</string>-->
+    <!--    <string name="step_name_title">Entrez votre nom</string>-->
 <!--    <string name="step_birth_title">Date de naissance et genre</string>-->
 <!--    <string name="step_username_title">Choisir un nom d'utilisateur</string>-->
 <!--    <string name="step_password_title">Créer un mot de passe</string>-->

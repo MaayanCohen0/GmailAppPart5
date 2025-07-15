@@ -419,10 +419,16 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
 
             // Handle trash context for spam button
             if (isTrashContext) {
-                buttonSpam.setVisibility(View.VISIBLE);
+                //buttonSpam.setVisibility(View.VISIBLE);
+                buttonStar.setVisibility(View.GONE);
+                buttonRestore.setVisibility(View.VISIBLE);
             } else {
-                buttonSpam.setVisibility(View.GONE);
+                //buttonSpam.setVisibility(View.GONE);
+                buttonStar.setVisibility(View.VISIBLE);
+                buttonRestore.setVisibility(View.GONE);
             }
+            // show spam button everywhere
+            buttonSpam.setVisibility(View.VISIBLE);
 
             // Set click listeners using the universal action handler
             itemContainer.setOnClickListener(v -> listener.onEmailClick(email));

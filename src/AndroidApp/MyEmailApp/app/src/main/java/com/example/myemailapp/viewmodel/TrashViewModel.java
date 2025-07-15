@@ -1,7 +1,6 @@
 package com.example.myemailapp.viewmodel;
 
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -16,9 +15,10 @@ public class TrashViewModel extends AndroidViewModel {
     private TrashRepository trashRepository;
     private MutableLiveData<Boolean> shouldShowEmpty = new MutableLiveData<>();
 
+    // Constructor that takes Application (AndroidViewModel requirement)
     public TrashViewModel(@NonNull Application application) {
         super(application);
-        trashRepository = new TrashRepository(application);
+        trashRepository = new TrashRepository(application.getApplicationContext());
         shouldShowEmpty.setValue(false);
     }
 
