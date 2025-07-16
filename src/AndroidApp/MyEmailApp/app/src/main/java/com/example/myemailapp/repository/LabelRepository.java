@@ -87,30 +87,6 @@ public class LabelRepository {
     public void refreshLabels() {
         fetchFromApi();
     }
-
-    private void fetchFromApi() {
-        isLoadingLiveData.postValue(true);
-
-        apiService.fetchLabels(new LabelApiService.ApiCallback<List<Label>>() {
-            @Override
-            public void onSuccess(List<Label> labels) {
-                // Store in memory instead of database
-                labelsLiveData.postValue(labels);
-                isLoadingLiveData.postValue(false);
-                Log.d(TAG, "Labels fetched and stored in memory: " + labels.size() + " labels");
-            }
-
-            @Override
-            public void onError(String error) {
-                errorLiveData.postValue(error);
-                isLoadingLiveData.postValue(false);
-            }
-        });
-    }
-
-    /**
-     * Add a single label (stored in memory only)
-     */
     public void addLabel(Label label) {
         List<Label> currentLabels = labelsLiveData.getValue();
         if (currentLabels != null) {
@@ -136,10 +112,37 @@ public class LabelRepository {
         }
     }
 
-    /**
-     * Clear all labels from memory
-     */
-    public void clearLabels() {
+    public void updateLabel(String labelId, String newLabel) {
+        List<Label> currentLabels = labelsLiveData.getValue();
+        if (currentLabels != null) {
+            for (Label label : currentLabels) {
+                if (label.getId().equals(labelId)) {
+                    label.setName(newLabel);
+                    break;
+                }
+            }
+        }
+    }
+    private void fetchFromApi() {
+        isLoadingLiveData.postValue(true);
+
+        apiService.fetchLabels(new LabelApiService.ApiCallback<List<Label>>() {
+            @Override
+            public void onSuccess(List<Label> labels) {
+                // Store in memory instead of database
+                labelsLiveData.postValue(labels);
+                isLoadingLiveData.postValue(false);
+                Log.d(TAG, "Labels fetched and stored in memory: " + labels.size() + " labels");
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+                isLoadingLiveData.postValue(false);
+            }
+        });
+    }
+        public void clearLabels() {
         labelsLiveData.postValue(new ArrayList<>());
     }
 }

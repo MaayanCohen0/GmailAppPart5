@@ -146,6 +146,8 @@
     <string name="email_labels">Etiketten: %s</string>
     <string name="email_no_labels">Etiketten: Keine Etiketten</string>
 
+    <string name="search_btn">Etikett Suchen</string>
+
     <!--    <string name="step_name_title">Geben Sie Ihren Namen ein</string>-->
 <!--    <string name="step_birth_title">Geburtsdatum und Geschlecht</string>-->
 <!--    <string name="step_username_title">Benutzernamen wählen</string>-->

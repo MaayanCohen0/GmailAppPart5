@@ -104,6 +104,39 @@ public class LabelViewModel extends AndroidViewModel {
     }
 
     /**
+     * Add a new label
+     */
+    public void addLabel(Label label) {
+        if (labelRepository != null) {
+            labelRepository.addLabel(label);
+        } else {
+            Log.e(TAG, "Cannot add label - repository not initialized");
+        }
+    }
+
+    /**
+     * Update an existing label
+     */
+    public void updateLabel(String labelId, String newName) {
+        if (labelRepository != null) {
+            labelRepository.updateLabel(labelId, newName);
+        } else {
+            Log.e(TAG, "Cannot update label - repository not initialized");
+        }
+    }
+
+    /**
+     * Delete a label
+     */
+    public void deleteLabel(String labelId) {
+        if (labelRepository != null) {
+            labelRepository.deleteLabel(labelId);
+        } else {
+            Log.e(TAG, "Cannot delete label - repository not initialized");
+        }
+    }
+
+    /**
      * Start periodic refresh of labels
      */
     public void startPeriodicRefresh() {

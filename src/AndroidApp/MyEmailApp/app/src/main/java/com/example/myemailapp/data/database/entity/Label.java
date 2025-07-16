@@ -14,6 +14,11 @@ public class Label {
     private String name;
 
     private long lastUpdated;
+    public Label() {
+        this.id = " ";
+        this.name = " ";
+        this.lastUpdated = System.currentTimeMillis();
+    }
 
     public Label(@NonNull String id, @NonNull String name) {
         this.id = id;

@@ -140,6 +140,10 @@
     <string name="email_labels">Étiquettes: %s</string>
     <string name="email_no_labels">Étiquettes: Aucune étiquette</string>
 
+    <string name="search_btn">Cherche l\'éttiquette</string>
+
+
+
     <!--    <string name="step_name_title">Entrez votre nom</string>-->
 <!--    <string name="step_birth_title">Date de naissance et genre</string>-->
 <!--    <string name="step_username_title">Choisir un nom d'utilisateur</string>-->

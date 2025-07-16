@@ -151,6 +151,10 @@
     <string name="email_body">Body: %s</string>
     <string name="email_labels">Labels: %s</string>
     <string name="email_no_labels">Labels: No labels</string>
+
+
+    <string name="search_btn">Search Label</string>
+
     <!--    <string name="step_name_title">Enter Your Name</string>-->
 <!--    <string name="step_birth_title">Birth Date & Gender</string>-->
 <!--    <string name="step_username_title">Choose Username</string>-->
