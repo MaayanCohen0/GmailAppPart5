@@ -1,6 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <corners android:radius="8dp" />
-    <solid android:color="#E0E0E0" /> <!-- Slightly darker than #F5F5F5 -->
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/email_unread_background" /> <!-- unread: light orange -->
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/email_read_background" /> <!-- read: white -->
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</selector>

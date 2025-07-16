@@ -116,12 +116,29 @@
     <string name="draft_prefix">Brouillon : %1$s</string>
     <string name="mark_read">Marquer comme lu</string>
     <string name="mark_unread">Marquer comme non lu</string>
-    <string name="inbox_title">inbox</string>
-    <string name="empty_inbox_text">no mails in inbox yet</string>
-    <string name="sent_title">Sent</string>
-    <string name="empty_sent_text">No sent mails yet</string>
-    <string name="labels_section">Labels</string>
-    <string name="nav_view_labels">Labels</string>
+    <string name="inbox_title">Boîte de réception</string>
+    <string name="empty_inbox_text">Pas encore de mails dans la boîte de réception</string>
+    <string name="sent_title">Envoyés</string>
+    <string name="empty_sent_text">Pas encore de mails envoyés</string>
+    <string name="labels_section">Étiquettes</string>
+    <string name="nav_view_labels">Étiquettes</string>
+    <string name="nav_profile">Profil</string>
+
+    <string name="profile_image_desc">Image de profil</string>
+    <string name="name_format">Nom: %1$s %2$s</string>
+    <string name="username_format">Nom d\'utilisateur: @%1$s</string>
+    <string name="phone_format">Téléphone: %1$s</string>
+    <string name="birthdate_format">Date de naissance: %1$s</string>
+    <string name="gender_format">Sexe: %1$s</string>
+
+
+    <string name="email_from">De: %s</string>
+    <string name="email_subject">Objet: %s</string>
+    <string name="email_no_subject">(Pas de sujet)</string>
+    <string name="email_timestamp">Horodatage: %s</string>
+    <string name="email_body">Corps: %s</string>
+    <string name="email_labels">Étiquettes: %s</string>
+    <string name="email_no_labels">Étiquettes: Aucune étiquette</string>
 
     <!--    <string name="step_name_title">Entrez votre nom</string>-->
 <!--    <string name="step_birth_title">Date de naissance et genre</string>-->

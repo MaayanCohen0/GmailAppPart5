@@ -43,6 +43,10 @@
     <item android:title="@string/account_section">
         <menu>
             <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/user"
+                android:title="@string/nav_profile" />
+            <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/logout"
                 android:title="@string/nav_logout" />

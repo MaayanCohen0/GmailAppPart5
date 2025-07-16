@@ -133,7 +133,24 @@
     <string name="empty_sent_text">No sent mails yet</string>
     <string name="labels_section">Labels</string>
     <string name="nav_view_labels">Labels</string>
+    <string name="nav_profile">Profile</string>
 
+
+    <string name="profile_image_desc">Profile Picture</string>
+    <string name="name_format">Name: %1$s %2$s</string>
+    <string name="username_format">Username: @%1$s</string>
+    <string name="phone_format">Phone: %1$s</string>
+    <string name="birthdate_format">Birthdate: %1$s</string>
+    <string name="gender_format">Gender: %1$s</string>
+
+
+    <string name="email_from">From: %s</string>
+    <string name="email_subject">Subject: %s</string>
+    <string name="email_no_subject">(No Subject)</string>
+    <string name="email_timestamp">Timestamp: %s</string>
+    <string name="email_body">Body: %s</string>
+    <string name="email_labels">Labels: %s</string>
+    <string name="email_no_labels">Labels: No labels</string>
     <!--    <string name="step_name_title">Enter Your Name</string>-->
 <!--    <string name="step_birth_title">Birth Date & Gender</string>-->
 <!--    <string name="step_username_title">Choose Username</string>-->

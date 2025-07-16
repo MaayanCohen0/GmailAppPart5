@@ -24,12 +24,12 @@
     <TextView
         android:id="@+id/text_from"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/sender_placeholder"
-        android:textStyle="bold"
-        android:textSize="16sp"
+        android:layout_height="37dp"
+        android:ellipsize="end"
         android:maxLines="1"
-        android:ellipsize="end" />
+        android:text="@string/sender_placeholder"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <!-- Third line: Subject and beginning of email body (bold subject) -->
     <TextView
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:text="@string/subject_placeholder"
         android:textStyle="bold"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:paddingTop="4dp"
         android:maxLines="2"
         android:ellipsize="end" />
@@ -47,11 +47,11 @@
     <TextView
         android:id="@+id/text_labels"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/labels_placeholder"
-        android:paddingTop="4dp"
+        android:layout_height="39dp"
+        android:ellipsize="end"
         android:maxLines="1"
-        android:ellipsize="end" />
+        android:paddingTop="16dp"
+        android:text="@string/labels_placeholder" />
 
     <!-- Fifth line: Date, aligned to the right -->
     <TextView

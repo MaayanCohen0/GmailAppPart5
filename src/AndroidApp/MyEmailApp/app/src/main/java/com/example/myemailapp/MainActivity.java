@@ -29,6 +29,7 @@ import com.example.myemailapp.fragments.SentFragment;
 import com.example.myemailapp.fragments.SpamFragment;
 import com.example.myemailapp.fragments.StarredFragment;
 import com.example.myemailapp.fragments.TrashFragment;
+import com.example.myemailapp.fragments.ProfileFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONObject;
@@ -293,11 +294,13 @@ private void updateNavigationHeader() {
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.viewLabels) {
-            // Navigate to Labels Fragment
-//            navigateToLabels();
             fragment = new LabelsFragment();
             title = getString(R.string.nav_view_labels);
             fragmentTag = "labels";
+        } else if (id == R.id.nav_profile) {
+            fragment = new ProfileFragment();
+            title = getString(R.string.nav_profile);
+            fragmentTag = "profile";
         }
 
         if (fragment != null && !fragmentTag.equals(currentFragment)) {

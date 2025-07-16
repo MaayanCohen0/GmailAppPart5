@@ -1,6 +1,8 @@
 package com.example.myemailapp.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -64,4 +66,38 @@ public class InboxViewModel extends AndroidViewModel {
     public void updateEmptyState(List<Email> emails) {
         shouldShowEmpty.setValue(emails == null || emails.isEmpty());
     }
+
+//    public Email getEmailById(String emailId) {
+//        List<Email> emails = getInboxEmails().getValue();
+//        if (emails != null) {
+//            for (Email email : emails) {
+//                if (email.getId() != null && email.getId().equals(emailId)) {
+//                    return email;
+//                }
+//            }
+//        }
+//        return null;
+//    }
+public Email getEmailById(String emailId) {
+    if (emailId == null) {
+        Log.w("InboxViewModel", "getEmailById called with null emailId");
+        return null;
+    }
+    Log.d("InboxViewModel", "Searching email with ID: hiiiiiii " + emailId);
+    // If you have a LiveData<List<Email>> called emailsLiveData
+    //List<Email> currentEmails = emailsLiveData.getValue();
+    List<Email> currentEmails = getInboxEmails().getValue();
+    if (currentEmails != null) {
+        for (Email email : currentEmails) {
+            Log.d("InboxViewModel", "email with ID: " + email.getId());
+            if (emailId.equals(email.getId())) {
+                Log.d("InboxViewModel", "Found email with ID: " + emailId);
+                return email;
+            }
+        }
+    }
+
+    Log.w("InboxViewModel", "Email not found with ID: " + emailId);
+    return null;
+}
 }

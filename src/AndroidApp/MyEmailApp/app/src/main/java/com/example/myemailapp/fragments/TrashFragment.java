@@ -4,6 +4,7 @@ package com.example.myemailapp.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,7 +95,26 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
         emailAdapter = new EmailAdapter(trashEmails, new EmailAdapter.OnEmailClickListener() {
             @Override
             public void onEmailClick(Email email) {
-                // Handle email click if needed
+                onMarkReadClick(email);
+                Bundle args = new Bundle();
+                args.putString("from",      email.getFrom());
+                args.putString("subject",   email.getSubject());
+                args.putString("timestamp", email.getTimeStamp());
+                args.putString("body",      email.getBody());
+                // Labels: convert list → comma‐separated string (or empty)
+                args.putString("labels",
+                        email.getLabels() != null
+                                ? TextUtils.join(", ", email.getLabels())
+                                : "");
+
+                EmailDetailFragment detailFragment = new EmailDetailFragment();
+                detailFragment.setArguments(args);
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, detailFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
 
             @Override
@@ -110,12 +130,12 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
                     @Override
                     public void onSuccess() {
                         onEmailRemoved(email.getId());
-                        actionHandler.showToast("Email deleted permanently");
+//                        actionHandler.showToast("Email deleted permanently");
                     }
 
                     @Override
                     public void onError(String error) {
-                        actionHandler.showToast("Delete failed: " + error);
+//                        actionHandler.showToast("Delete failed: " + error);
                     }
                 });
             }
@@ -127,12 +147,12 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
                     @Override
                     public void onSuccess() {
                         onEmailReadStatusChanged(email.getId(), true);
-                        actionHandler.showToast("Marked as read");
+//                        actionHandler.showToast("Marked as read");
                     }
 
                     @Override
                     public void onError(String error) {
-                        actionHandler.showToast("Mark as read failed: " + error);
+//                        actionHandler.showToast("Mark as read failed: " + error);
                     }
                 });
             }
@@ -144,12 +164,12 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
                     @Override
                     public void onSuccess() {
                         onEmailReadStatusChanged(email.getId(), false);
-                        actionHandler.showToast("Marked as unread");
+//                        actionHandler.showToast("Marked as unread");
                     }
 
                     @Override
                     public void onError(String error) {
-                        actionHandler.showToast("Mark as unread failed: " + error);
+//                        actionHandler.showToast("Mark as unread failed: " + error);
                     }
                 });
             }
@@ -161,12 +181,12 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
                     @Override
                     public void onSuccess() {
                         onEmailRemoved(email.getId());
-                        actionHandler.showToast("Marked as spam");
+//                        actionHandler.showToast("Marked as spam");
                     }
 
                     @Override
                     public void onError(String error) {
-                        actionHandler.showToast("Mark as spam failed: " + error);
+//                        actionHandler.showToast("Mark as spam failed: " + error);
                     }
                 });
             }
@@ -281,12 +301,12 @@ public class TrashFragment extends Fragment implements EmailAdapter.OnEmailListU
                         @Override
                         public void onSuccess() {
                             onEmailLabelsChanged(email.getId(), newLabels);
-                            actionHandler.showToast("Labels updated successfully");
+//                            actionHandler.showToast("Labels updated successfully");
                         }
 
                         @Override
                         public void onError(String error) {
-                            actionHandler.showToast("Labels update failed: " + error);
+//                            actionHandler.showToast("Labels update failed: " + error);
                         }
                     });
                 })

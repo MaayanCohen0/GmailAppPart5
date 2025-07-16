@@ -123,12 +123,28 @@
 
 <!--    <string name="network_error">Netzwerkfehler: %1$s</string>-->
 <!--    <string name="username_not_available">Bitte wählen Sie einen anderen Benutzernamen</string>-->
-    <string name="inbox_title">inbox</string>
-    <string name="empty_inbox_text">no mails in inbox yet</string>
-    <string name="sent_title">Sent</string>
-    <string name="empty_sent_text">No sent mails yet</string>
-    <string name="labels_section">Labels</string>
-    <string name="nav_view_labels">Labels</string>
+    <string name="inbox_title">Posteingang</string>
+    <string name="empty_inbox_text">Noch keine Nachrichten im Posteingang</string>
+    <string name="sent_title">Gesendet</string>
+    <string name="empty_sent_text">Noch keine gesendeten Nachrichten</string>
+    <string name="labels_section">Etiketten</string>
+    <string name="nav_view_labels">Etiketten</string>
+    <string name="nav_profile">Profil</string>
+
+    <string name="profile_image_desc">Profilbild</string>
+    <string name="name_format">Name: %1$s %2$s</string>
+    <string name="username_format">Benutzername: @%1$s</string>
+    <string name="phone_format">Telefon: %1$s</string>
+    <string name="birthdate_format">Geburtsdatum: %1$s</string>
+    <string name="gender_format">Geschlecht: %1$s</string>
+
+    <string name="email_from">Von: %s</string>
+    <string name="email_subject">Betreff: %s</string>
+    <string name="email_no_subject">(Kein Betreff)</string>
+    <string name="email_timestamp">Zeitstempel: %s</string>
+    <string name="email_body">Text: %s</string>
+    <string name="email_labels">Etiketten: %s</string>
+    <string name="email_no_labels">Etiketten: Keine Etiketten</string>
 
     <!--    <string name="step_name_title">Geben Sie Ihren Namen ein</string>-->
 <!--    <string name="step_birth_title">Geburtsdatum und Geschlecht</string>-->
