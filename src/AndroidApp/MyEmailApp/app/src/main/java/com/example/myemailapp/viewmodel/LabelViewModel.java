@@ -16,7 +16,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class LabelViewModel extends AndroidViewModel {
     private static final String TAG = "LabelViewModel";
-    private static final long REFRESH_INTERVAL = 5000; // 5 seconds
+    private static final long REFRESH_INTERVAL = 3000; // 5 seconds
 
     private LabelRepository labelRepository;
     private Handler handler;

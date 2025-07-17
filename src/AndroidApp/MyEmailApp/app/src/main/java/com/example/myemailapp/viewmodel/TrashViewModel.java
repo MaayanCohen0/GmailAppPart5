@@ -55,7 +55,7 @@ public class TrashViewModel extends AndroidViewModel {
     }
 
     public void markAsUnread(Email email) {
-        //trashRepository.markAsUnread(email);
+        trashRepository.markAsUnread(email);
     }
 
     public void markAsSpam(Email email) {

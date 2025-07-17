@@ -87,42 +87,108 @@ public class LabelRepository {
     public void refreshLabels() {
         fetchFromApi();
     }
+
+    /**
+     * Add a label via API call
+     */
     public void addLabel(Label label) {
-        List<Label> currentLabels = labelsLiveData.getValue();
-        if (currentLabels != null) {
-            List<Label> updatedLabels = new ArrayList<>(currentLabels);
-            updatedLabels.add(label);
-            labelsLiveData.postValue(updatedLabels);
-        }
+        isLoadingLiveData.postValue(true);
+
+        apiService.createLabel(label, new LabelApiService.ApiCallback<Label>() {
+            @Override
+            public void onSuccess(Label createdLabel) {
+                // Add to memory after successful API call
+                List<Label> currentLabels = labelsLiveData.getValue();
+                if (currentLabels != null) {
+                    List<Label> updatedLabels = new ArrayList<>(currentLabels);
+                    updatedLabels.add(createdLabel);
+                    labelsLiveData.postValue(updatedLabels);
+                }
+                isLoadingLiveData.postValue(false);
+                Log.d(TAG, "Label added successfully: " + createdLabel.getName());
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue("Failed to add label: " + error);
+                isLoadingLiveData.postValue(false);
+                Log.e(TAG, "Error adding label: " + error);
+            }
+        });
     }
 
     /**
-     * Delete a label (from memory only)
+     * Delete a label via API call
      */
     public void deleteLabel(String labelId) {
-        List<Label> currentLabels = labelsLiveData.getValue();
-        if (currentLabels != null) {
-            List<Label> updatedLabels = new ArrayList<>();
-            for (Label label : currentLabels) {
-                if (!label.getId().equals(labelId)) {
-                    updatedLabels.add(label);
+        isLoadingLiveData.postValue(true);
+
+        apiService.deleteLabel(labelId, new LabelApiService.ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                // Remove from memory after successful API call
+                List<Label> currentLabels = labelsLiveData.getValue();
+                if (currentLabels != null) {
+                    List<Label> updatedLabels = new ArrayList<>();
+                    for (Label label : currentLabels) {
+                        if (!label.getId().equals(labelId)) {
+                            updatedLabels.add(label);
+                        }
+                    }
+                    labelsLiveData.postValue(updatedLabels);
                 }
+                isLoadingLiveData.postValue(false);
+                Log.d(TAG, "Label deleted successfully: " + labelId);
             }
-            labelsLiveData.postValue(updatedLabels);
-        }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue("Failed to delete label: " + error);
+                isLoadingLiveData.postValue(false);
+                Log.e(TAG, "Error deleting label: " + error);
+            }
+        });
     }
 
-    public void updateLabel(String labelId, String newLabel) {
-        List<Label> currentLabels = labelsLiveData.getValue();
-        if (currentLabels != null) {
-            for (Label label : currentLabels) {
-                if (label.getId().equals(labelId)) {
-                    label.setName(newLabel);
-                    break;
+    /**
+     * Update a label via API call
+     */
+    public void updateLabel(String labelId, String newLabelName) {
+        isLoadingLiveData.postValue(true);
+
+        // Create updated label object
+        Label updatedLabel = new Label();
+        updatedLabel.setId(labelId);
+        updatedLabel.setName(newLabelName);
+
+        apiService.updateLabel(labelId, updatedLabel, new LabelApiService.ApiCallback<Label>() {
+            @Override
+            public void onSuccess(Label updatedLabel) {
+                // Update in memory after successful API call
+                List<Label> currentLabels = labelsLiveData.getValue();
+                if (currentLabels != null) {
+                    for (Label label : currentLabels) {
+                        if (label.getId().equals(labelId)) {
+                            label.setName(updatedLabel.getName());
+                            break;
+                        }
+                    }
+                    // Trigger LiveData update
+                    labelsLiveData.postValue(new ArrayList<>(currentLabels));
                 }
+                isLoadingLiveData.postValue(false);
+                Log.d(TAG, "Label updated successfully: " + updatedLabel.getName());
             }
-        }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue("Failed to update label: " + error);
+                isLoadingLiveData.postValue(false);
+                Log.e(TAG, "Error updating label: " + error);
+            }
+        });
     }
+
     private void fetchFromApi() {
         isLoadingLiveData.postValue(true);
 
@@ -142,7 +208,8 @@ public class LabelRepository {
             }
         });
     }
-        public void clearLabels() {
+
+    public void clearLabels() {
         labelsLiveData.postValue(new ArrayList<>());
     }
 }

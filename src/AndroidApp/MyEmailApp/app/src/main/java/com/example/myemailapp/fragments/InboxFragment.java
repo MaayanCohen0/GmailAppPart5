@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import com.example.myemailapp.viewmodel.LabelViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -39,16 +41,19 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
     private RecyclerView recyclerView;
     private EmailAdapter emailAdapter;
     private TextView emptyText;
-//    private TextView titleText;
+    private ToggleButton toggleUnreadOnly;
+    //    private TextView titleText;
     private Handler handler;
     private Runnable refreshRunnable;
 
     private InboxViewModel inboxViewModel;
     private LabelViewModel labelViewModel;
     private List<Email> inboxEmails = new ArrayList<>();
+    private List<Email> allEmails = new ArrayList<>(); // Store all emails
     private List<String> availableLabels = new ArrayList<>();
     private EmailActionHandler actionHandler;
     private String authToken;
+    private boolean showUnreadOnly = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +79,7 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
         initializeViews(view);
         setupRecyclerView();
         setupObservers();
+        setupToggleButton();
 
         // Load initial data
         inboxViewModel.loadInboxEmails();
@@ -85,9 +91,46 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
     private void initializeViews(View view) {
         recyclerView = view.findViewById(R.id.recycler_view_inbox);
         emptyText = view.findViewById(R.id.empty_inbox_text);
+        toggleUnreadOnly = view.findViewById(R.id.toggle_unread_only);
 //        titleText = view.findViewById(R.id.inbox_title);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    private void setupToggleButton() {
+        toggleUnreadOnly.setTextOn("Unread Only");
+        toggleUnreadOnly.setTextOff("All Emails");
+        toggleUnreadOnly.setChecked(showUnreadOnly);
+
+        toggleUnreadOnly.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            showUnreadOnly = isChecked;
+            applyEmailFilter();
+        });
+    }
+
+    private void applyEmailFilter() {
+        List<Email> filteredEmails;
+
+        if (showUnreadOnly) {
+            // Filter to show only unread emails
+            filteredEmails = allEmails.stream()
+                    .filter(email -> !email.isRead())
+                    .collect(Collectors.toList());
+        } else {
+            // Show all emails
+            filteredEmails = new ArrayList<>(allEmails);
+        }
+
+        inboxEmails.clear();
+        inboxEmails.addAll(filteredEmails);
+        emailAdapter.notifyDataSetChanged();
+
+        // Update empty state based on filtered results
+        inboxViewModel.updateEmptyState(inboxEmails);
+
+        Log.d(TAG, "Applied filter - Show unread only: " + showUnreadOnly +
+                ", Filtered emails: " + filteredEmails.size() +
+                ", Total emails: " + allEmails.size());
     }
 
     private void setupRecyclerView() {
@@ -202,14 +245,14 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
         // Observe inbox emails
         inboxViewModel.getInboxEmails().observe(getViewLifecycleOwner(), emails -> {
             if (emails != null) {
-                inboxEmails.clear();
-                inboxEmails.addAll(emails);
-                emailAdapter.notifyDataSetChanged();
+                // Store all emails
+                allEmails.clear();
+                allEmails.addAll(emails);
 
-                // Update empty state
-                inboxViewModel.updateEmptyState(emails);
+                // Apply current filter
+                applyEmailFilter();
 
-                Log.d(TAG, "Updated inbox emails: " + emails.size() + " items");
+                Log.d(TAG, "Updated inbox emails: " + emails.size() + " total items");
             }
         });
 
@@ -309,6 +352,8 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
 
     @Override
     public void onEmailRemoved(String emailId) {
+        // Remove from both lists
+        allEmails = EmailListManager.removeEmailFromList(allEmails, emailId);
         inboxEmails = EmailListManager.removeEmailFromList(inboxEmails, emailId);
         emailAdapter.updateEmailList(inboxEmails);
         inboxViewModel.updateEmptyState(inboxEmails);
@@ -316,20 +361,35 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
 
     @Override
     public void onEmailReadStatusChanged(String emailId, boolean isRead) {
+        // Update both lists
+        allEmails = EmailListManager.updateEmailReadStatus(allEmails, emailId, isRead);
         inboxEmails = EmailListManager.updateEmailReadStatus(inboxEmails, emailId, isRead);
-        emailAdapter.updateEmailList(inboxEmails);
+
+        // If showing unread only and email was marked as read, remove it from view
+        if (showUnreadOnly && isRead) {
+            applyEmailFilter();
+        } else {
+            emailAdapter.updateEmailList(inboxEmails);
+        }
     }
 
     @Override
     public void onEmailStarStatusChanged(String emailId, boolean isStarred) {
+        // Update both lists
+        allEmails = EmailListManager.updateEmailStarStatus(allEmails, emailId, isStarred);
         inboxEmails = EmailListManager.updateEmailStarStatus(inboxEmails, emailId, isStarred);
         emailAdapter.updateEmailList(inboxEmails);
     }
 
     @Override
     public void onEmailLabelsChanged(String emailId, List<String> labels) {
+        // Update both lists
+        allEmails = EmailListManager.updateEmailLabels(allEmails, emailId, labels);
         inboxEmails = EmailListManager.updateEmailLabels(inboxEmails, emailId, labels);
         emailAdapter.updateEmailList(inboxEmails);
+//        emailAdapter.notifyDataSetChanged();
+        int pos = emailAdapter.getPositionById(emailId);
+        if (pos != -1) emailAdapter.notifyItemChanged(pos);
     }
 
     @Override

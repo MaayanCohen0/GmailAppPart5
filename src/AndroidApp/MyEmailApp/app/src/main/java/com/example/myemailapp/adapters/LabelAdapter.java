@@ -20,6 +20,8 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
     public interface LabelClickListener {
         void onEditClick(Label label);
         void onDeleteClick(Label label);
+
+//        void onSearchClick(Label label);
     }
 
     public LabelAdapter(List<Label> labels, LabelClickListener listener) {
@@ -57,6 +59,8 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
         private MaterialButton btnEdit;
         private MaterialButton btnDelete;
 
+        private MaterialButton btnSearch;
+
         public LabelViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.card_view_label);
@@ -80,9 +84,15 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
                 }
             });
 
+//            btnSearch.setOnClickListener(v -> {
+//                if (listener != null) {
+//                    listener.onSearchClick(label);
+//                }
+//            });
+
             // Optional: Add some visual feedback
             cardView.setOnClickListener(v -> {
-                // You can add label selection logic here if needed
+                // haha
             });
         }
     }

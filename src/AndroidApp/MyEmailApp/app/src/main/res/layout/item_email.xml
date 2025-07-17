@@ -51,6 +51,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingTop="16dp"
+        android:paddingStart="3dp"
         android:text="@string/labels_placeholder" />
 
     <!-- Fifth line: Date, aligned to the right -->

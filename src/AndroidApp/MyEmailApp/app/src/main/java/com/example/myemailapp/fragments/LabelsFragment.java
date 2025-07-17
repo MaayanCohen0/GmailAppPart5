@@ -1,47 +1,8 @@
-//package com.example.myemailapp.fragments;
-//
-//import android.os.Bundle;
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.LinearLayout;
-//import android.widget.TextView;
-//
-//import androidx.fragment.app.Fragment;
-//
-//public class LabelsFragment extends Fragment {
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        // Create the layout programmatically
-//        LinearLayout layout = new LinearLayout(getContext());
-//        layout.setOrientation(LinearLayout.VERTICAL);
-//        layout.setPadding(40, 60, 40, 40);
-//
-//        // Title
-//        TextView titleText = new TextView(getContext());
-//        titleText.setText("Labels");
-//        titleText.setTextSize(24);
-//        titleText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//        titleText.setPadding(0, 0, 0, 30);
-//        titleText.setTextColor(0xFFFF5722); // Orange-red color
-//
-//        // Content
-//        TextView contentText = new TextView(getContext());
-//        contentText.setText("Labels yayyyy");
-//        contentText.setTextSize(16);
-//        contentText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//        contentText.setLineSpacing(8, 1.2f);
-//
-//        layout.addView(titleText);
-//        layout.addView(contentText);
-//
-//        return layout;
-//    }
-//}
 package com.example.myemailapp.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +33,14 @@ public class LabelsFragment extends Fragment implements LabelAdapter.LabelClickL
     private FloatingActionButton fabAddLabel;
     private SearchView searchView;
     private List<Label> allLabels = new ArrayList<>();
+    private final Handler refreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable refreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            labelViewModel.refreshLabels();
+            refreshHandler.postDelayed(this, 3_000); // Refresh every 30 seconds
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -228,18 +197,18 @@ public class LabelsFragment extends Fragment implements LabelAdapter.LabelClickL
         newLabel.setId(String.valueOf(System.currentTimeMillis())); // Temporary ID
 
         labelViewModel.addLabel(newLabel);
-        Toast.makeText(getContext(), "Label added: " + labelName, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Label added: " + labelName, Toast.LENGTH_SHORT).show();
     }
 
     private void updateLabel(String labelId, String newName) {
         // You'll need to implement this in your repository
         labelViewModel.updateLabel(labelId, newName);
-        Toast.makeText(getContext(), "Label updated", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Label updated", Toast.LENGTH_SHORT).show();
     }
 
     private void deleteLabel(String labelId) {
         labelViewModel.deleteLabel(labelId);
-        Toast.makeText(getContext(), "Label deleted", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Label deleted", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -252,10 +221,24 @@ public class LabelsFragment extends Fragment implements LabelAdapter.LabelClickL
         showDeleteConfirmationDialog(label);
     }
 
+//    @Override
+//    public void onSearchClick(Label label) {
+//
+//    }
+
     @Override
     public void onResume() {
         super.onResume();
         // Refresh labels when fragment becomes visible
         labelViewModel.refreshLabels();
+        // Start periodic refresh
+        refreshHandler.post(refreshRunnable);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Stop periodic refresh when fragment is not visible
+        refreshHandler.removeCallbacks(refreshRunnable);
     }
 }

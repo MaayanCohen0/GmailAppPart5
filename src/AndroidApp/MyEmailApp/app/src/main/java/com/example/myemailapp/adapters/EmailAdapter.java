@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ReplacementSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
     private boolean isTrashContext;
     private EmailActionHandler actionHandler;
     private OnEmailListUpdateListener listUpdateListener;
+
+
 
     public interface OnEmailListUpdateListener {
         void onEmailRemoved(String emailId);
@@ -60,6 +63,12 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
         notifyDataSetChanged();
     }
 
+    public int getPositionById(String id) {
+        for (int i = 0; i < emails.size(); i++)
+            if (emails.get(i).getId().equals(id)) return i;
+        return -1;
+    }
+
     @NonNull
     @Override
     public EmailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -70,7 +79,7 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
 
     @Override
     public void onBindViewHolder(@NonNull EmailViewHolder holder, int position) {
-        holder.bind(emails.get(position), listener);
+//        holder.bind(emails.get(position), listener);
         Email email = emails.get(position);
         holder.bind(email, listener);
         if (email.isRead()) {
@@ -149,23 +158,61 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
             }
 
             // Handle labels with rounded background
+//            if (email.getLabels() != null && !email.getLabels().isEmpty()) {
+//                String labelsText = String.join("  ", email.getLabels()); // Extra space for padding
+//                SpannableString spannableLabels = new SpannableString(labelsText);
+//                int start = 0;
+//                for (String label : email.getLabels()) {
+//                    int end = start + label.length();
+//                    spannableLabels.setSpan(
+//                            new RoundedBackgroundSpan(
+//                                    ContextCompat.getColor(ctx, R.color.yellow),
+//                                    ContextCompat.getColor(ctx, android.R.color.black),
+//                                    12f, // Increased corner radius for larger appearance
+//                                    6f,  // Increased horizontal padding
+//                                    6f   // Increased vertical padding
+//                            ),
+//                            start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+//                    );
+//                    start = end + 2; // Account for the double space separator
+//                }
+//                textLabels.setText(spannableLabels);
+//                textLabels.setVisibility(View.VISIBLE);
+//            } else {
+//                textLabels.setText(ctx.getString(R.string.no_labels));
+//                textLabels.setVisibility(View.VISIBLE);
+//            }
             if (email.getLabels() != null && !email.getLabels().isEmpty()) {
-                String labelsText = String.join("  ", email.getLabels()); // Extra space for padding
-                SpannableString spannableLabels = new SpannableString(labelsText);
-                int start = 0;
-                for (String label : email.getLabels()) {
-                    int end = start + label.length();
+                SpannableString spannableLabels;
+                if (email.getLabels().size() == 1) {
+                    String label = email.getLabels().get(0);
+                    // Add padding spaces to mimic multiple-label behavior
+                    String paddedLabel = label + "  "; // Add two spaces to match String.join separator
+                    spannableLabels = new SpannableString(paddedLabel);
                     spannableLabels.setSpan(
                             new RoundedBackgroundSpan(
                                     ContextCompat.getColor(ctx, R.color.yellow),
                                     ContextCompat.getColor(ctx, android.R.color.black),
-                                    12f, // Increased corner radius for larger appearance
-                                    6f,  // Increased horizontal padding
-                                    6f   // Increased vertical padding
+                                    12f, 8f, 6f
                             ),
-                            start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                            0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                     );
-                    start = end + 2; // Account for the double space separator
+                } else {
+                    String labelsText = String.join("  ", email.getLabels());
+                    spannableLabels = new SpannableString(labelsText);
+                    int start = 0;
+                    for (String label : email.getLabels()) {
+                        int end = start + label.length();
+                        spannableLabels.setSpan(
+                                new RoundedBackgroundSpan(
+                                        ContextCompat.getColor(ctx, R.color.yellow),
+                                        ContextCompat.getColor(ctx, android.R.color.black),
+                                        12f, 8f, 6f
+                                ),
+                                start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        );
+                        start = end + 2;
+                    }
                 }
                 textLabels.setText(spannableLabels);
                 textLabels.setVisibility(View.VISIBLE);
@@ -176,27 +223,6 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
 
             textTimestamp.setText(email.getTimeStamp());
 
-            // Toggle visibility based on read status
-//            if (email.isRead()) {
-//                itemContainer.setAlpha(0.7f);
-//                buttonMarkRead.setVisibility(View.GONE);
-//                buttonMarkUnread.setVisibility(View.VISIBLE);
-//            } else {
-//                itemContainer.setAlpha(1.0f);
-//                buttonMarkRead.setVisibility(View.VISIBLE);
-//                buttonMarkUnread.setVisibility(View.GONE);
-//            }
-//            if (email.isRead()) {
-//                itemContainer.setBackgroundColor(ContextCompat.getColor(ctx, R.color.email_read_background));
-//                itemContainer.setAlpha(0.7f);
-//                buttonMarkRead.setVisibility(View.GONE);
-//                buttonMarkUnread.setVisibility(View.VISIBLE);
-//            } else {
-//                itemContainer.setBackgroundColor(ContextCompat.getColor(ctx, R.color.email_unread_background));
-//                itemContainer.setAlpha(1.0f);
-//                buttonMarkRead.setVisibility(View.VISIBLE);
-//                buttonMarkUnread.setVisibility(View.GONE);
-//            }
             itemContainer.setSelected(! email.isRead());
             buttonMarkRead.setVisibility(email.isRead()   ? View.GONE : View.VISIBLE);
             buttonMarkUnread.setVisibility(email.isRead() ? View.VISIBLE : View.GONE);
@@ -333,33 +359,63 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
 
         @Override
         public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
-//            RectF rect = new RectF(x, top - verticalPadding, x + paint.measureText(text, start, end) + 2 * padding, bottom + verticalPadding);
-//            paint.setColor(backgroundColor);
-//            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-//            paint.setColor(textColor);
-//            canvas.drawText(text, start, end, x + padding, y, paint);
+            float textWidth = paint.measureText(text, start, end);
+            Log.d("RoundedBackgroundSpan", "draw: Text: '" + text.subSequence(start, end) + "', Width: " + textWidth + ", Rect: (" + x + ", " + (top - verticalPadding) + ", " + (x + textWidth + 2 * padding) + ", " + (bottom + verticalPadding) + ")");
+            if (textWidth <= 0) {
+                Log.w("RoundedBackgroundSpan", "Invalid text width, using fallback");
+                textWidth = 1f;
+            }
             RectF rect = new RectF(
                     x,
                     top - verticalPadding,
-                    x + paint.measureText(text, start, end) + 2 * padding,
+                    x + textWidth + 2 * padding,
                     bottom + verticalPadding
             );
-
-            // Draw background
+            if (rect.width() <= 0 || rect.height() <= 0) {
+                Log.w("RoundedBackgroundSpan", "Invalid RectF, adjusting: " + rect);
+                rect.right = rect.left + 1f;
+                rect.bottom = rect.top + 1f;
+            }
             paint.setColor(backgroundColor);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-
-            // Draw thin black outline
             paint.setColor(strokeColor);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(strokeWidth);
             canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint);
-
-            // Draw text
             paint.setColor(textColor);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawText(text, start, end, x + padding, y, paint);
         }
     }
+//        public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+////            RectF rect = new RectF(x, top - verticalPadding, x + paint.measureText(text, start, end) + 2 * padding, bottom + verticalPadding);
+////            paint.setColor(backgroundColor);
+////            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+////            paint.setColor(textColor);
+////            canvas.drawText(text, start, end, x + padding, y, paint);
+//            RectF rect = new RectF(
+//                    x,
+//                    top - verticalPadding,
+//                    x + paint.measureText(text, start, end) + 2 * padding,
+//                    bottom + verticalPadding
+//            );
+//
+//            // Draw background
+//            paint.setColor(backgroundColor);
+//            paint.setStyle(Paint.Style.FILL);
+//            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+//
+//            // Draw thin black outline
+//            paint.setColor(strokeColor);
+//            paint.setStyle(Paint.Style.STROKE);
+//            paint.setStrokeWidth(strokeWidth);
+//            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint);
+//
+//            // Draw text
+//            paint.setColor(textColor);
+//            paint.setStyle(Paint.Style.FILL);
+//            canvas.drawText(text, start, end, x + padding, y, paint);
+//        }
+//    }
 }
