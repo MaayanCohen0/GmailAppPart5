@@ -167,4 +167,7 @@
     <string name="unread_only">Non lus uniquement</string>
     <string name="no_emails_in_inbox">Aucun e-mail dans la boîte de réception</string>
 
+    <string name="home_greeting">Bonjour %1$s!</string>
+    <string name="username_default">hihi</string>
+
 </resources>

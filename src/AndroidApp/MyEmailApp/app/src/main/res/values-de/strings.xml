@@ -172,7 +172,8 @@
     <string name="unread_only">Nur ungelesene</string>
     <string name="no_emails_in_inbox">Keine E-Mails im Posteingang</string>
 
-
+    <string name="home_greeting">Hallo %1$s!</string>
+    <string name="username_default">hihi</string>
 
 
 </resources>

@@ -181,4 +181,7 @@
     <string name="unread_only">Unread Only</string>
     <string name="no_emails_in_inbox">No emails in inbox</string>
 
+    <string name="home_greeting">Hey %1$s!</string>
+    <string name="username_default">hihi</string>
+
 </resources>
