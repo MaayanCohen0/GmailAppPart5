@@ -146,7 +146,7 @@ public class LabelsFragment extends Fragment implements LabelAdapter.LabelClickL
         TextInputEditText editText = dialogView.findViewById(R.id.edit_text_label_name);
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Add New Label")
+                .setTitle(R.string.add_new_label)
                 .setView(dialogView)
                 .setPositiveButton("Add", (dialog, which) -> {
                     String labelName = editText.getText().toString().trim();

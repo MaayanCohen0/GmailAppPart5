@@ -69,6 +69,7 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
         // Initialize ViewModels
         inboxViewModel = new ViewModelProvider(this).get(InboxViewModel.class);
         labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
+
     }
 
     @Override
@@ -92,14 +93,12 @@ public class InboxFragment extends Fragment implements EmailAdapter.OnEmailListU
         recyclerView = view.findViewById(R.id.recycler_view_inbox);
         emptyText = view.findViewById(R.id.empty_inbox_text);
         toggleUnreadOnly = view.findViewById(R.id.toggle_unread_only);
-//        titleText = view.findViewById(R.id.inbox_title);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     private void setupToggleButton() {
-        toggleUnreadOnly.setTextOn("Unread Only");
-        toggleUnreadOnly.setTextOff("All Emails");
+//        toggleUnreadOnly.setTextOn("Unread Only");
+//        toggleUnreadOnly.setTextOff("All Emails");
         toggleUnreadOnly.setChecked(showUnreadOnly);
 
         toggleUnreadOnly.setOnCheckedChangeListener((buttonView, isChecked) -> {

@@ -12,23 +12,22 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:titleTextColor="@android:color/white"
-        app:title="Emails"
+        app:title="@string/toolbar_title_emails"
         android:paddingStart="16dp"
         app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
-
 
     <!-- Back Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="16dp"> <!-- Adds left padding to the container -->
+        android:paddingStart="16dp">
 
         <Button
             android:id="@+id/button_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Back"
+            android:text="@string/back_button"
             android:backgroundTint="#6200EE"
             android:textColor="@android:color/white"
             android:paddingTop="8dp"
@@ -49,7 +48,7 @@
         android:id="@+id/no_searched_emails_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No emails with this label"
+        android:text="@string/no_emails_with_label"
         android:textAlignment="center"
         android:textSize="18sp"
         android:layout_margin="16dp"

@@ -139,57 +139,32 @@
     <string name="email_body">Corps: %s</string>
     <string name="email_labels">Étiquettes: %s</string>
     <string name="email_no_labels">Étiquettes: Aucune étiquette</string>
-
+    <string name="no_sender">(aucun expéditeur)</string>
     <string name="search_btn">Cherche l\'éttiquette</string>
 
+    <string name="add_new_label">Ajouter une nouvelle étiquette</string>
+    <string name="label_name_hint">Nom de l\'étiquette</string>
+    <string name="back_button">Retour</string>
+    <string name="labels_prefix">Étiquettes :</string>
 
+    <string name="search_labels_hint">Rechercher des étiquettes...</string>
+    <string name="no_labels_found">Aucune étiquette trouvée</string>
+    <string name="create_label_prompt">Appuyez sur le bouton + pour créer votre première étiquette</string>
+    <string name="add_label">Ajouter une étiquette</string>
+    <string name="name_prefix">Nom : %s</string>
+    <string name="username_prefix">Nom d\'utilisateur : %s</string>
+    <string name="phone_prefix">Téléphone : %s</string>
+    <string name="birthdate_prefix">Date de naissance : %s</string>
+    <string name="gender_prefix">Genre : %s</string>
 
-    <!--    <string name="step_name_title">Entrez votre nom</string>-->
-<!--    <string name="step_birth_title">Date de naissance et genre</string>-->
-<!--    <string name="step_username_title">Choisir un nom d'utilisateur</string>-->
-<!--    <string name="step_password_title">Créer un mot de passe</string>-->
-<!--    <string name="step_phone_title">Numéro de téléphone</string>-->
-<!--    <string name="step_profile_title">Photo de profil (facultatif)</string>-->
-<!--    <string name="next_button">Suivant</string>-->
-<!--    <string name="signup_button">S'inscrire</string>-->
-<!--    <string name="back_to_login_button">Retour à la connexion</string>-->
-<!--    <string name="back_button">Retour</string>-->
-
-
-
-<!--    <string name="first_name_required">Le prénom est requis</string>-->
-<!--    <string name="first_name_invalid">Le prénom ne doit contenir que des lettres</string>-->
-<!--    <string name="last_name_required">Le nom de famille est requis</string>-->
-<!--    <string name="last_name_invalid">Le nom de famille ne doit contenir que des lettres</string>-->
-<!--    <string name="birth_date_required">La date de naissance est requise</string>-->
-<!--    <string name="birth_date_future">La date de naissance doit être dans le passé</string>-->
-<!--    <string name="birth_date_invalid">Format de date invalide</string>-->
-<!--    <string name="gender_required">Veuillez sélectionner un genre</string>-->
-<!--    <string name="username_required">Le nom d\'utilisateur est requis</string>-->
-<!--    <string name="username_too_short">Le nom d\'utilisateur doit comporter au moins 3 caractères</string>-->
-<!--    <string name="username_invalid">Le nom d\'utilisateur ne doit contenir que des lettres et des chiffres</string>-->
-<!--    <string name="username_exists">Ce nom d\'utilisateur existe déjà. Veuillez en choisir un autre</string>-->
-<!--    <string name="username_validation_failed">Échec de la validation du nom d\'utilisateur. Veuillez réessayer.</string>-->
-<!--    <string name="username_network_error">Erreur réseau. Veuillez réessayer.</string>-->
-<!--    <string name="password_required">Le mot de passe est requis</string>-->
-<!--    <string name="password_too_short">Le mot de passe doit comporter au moins 6 caractères</string>-->
-<!--    <string name="password_contains_space">Le mot de passe ne peut pas contenir d\'espaces</string>-->
-<!--    <string name="confirm_password_required">Veuillez confirmer votre mot de passe</string>-->
-<!--    <string name="passwords_not_match">Les mots de passe doivent correspondre</string>-->
-<!--    <string name="phone_required">Le numéro de téléphone est requis</string>-->
-<!--    <string name="phone_invalid">Le numéro de téléphone doit comporter 10 chiffres et commencer par \'05\'</string>-->
-<!--    <string name="invalid_image_file">Veuillez sélectionner un fichier image valide</string>-->
-<!--    <string name="no_image_selected">Aucune image sélectionnée</string>-->
-<!--    <string name="image_upload_error">Erreur lors de la préparation de l\'image pour le téléchargement</string>-->
-<!--    <string name="invalid_image_type">Veuillez télécharger un fichier image valide (jpg, jpeg, png, gif)</string>-->
-<!--    <string name="file_chooser_error">Impossible d\'ouvrir le sélecteur de fichiers</string>-->
-<!--    <string name="file_access_error">Impossible d\'accéder aux fichiers</string>-->
-<!--    <string name="storage_permission_denied">Permission d\'accès au stockage refusée</string>-->
-<!--    <string name="registration_failed">Échec de l\'inscription</string>-->
-<!--    <string name="network_error">Erreur réseau : %1$s</string>-->
-<!--    <string name="registering">Inscription en cours...</string>-->
-<!--    <string name="username_not_available">Veuillez choisir un autre nom d\'utilisateur</string>-->
-
-
+    <string name="label_name">Nom de l\'étiquette</string>
+    <string name="edit_button">Modifier</string>
+    <string name="delete_button">Supprimer</string>
+    <string name="toolbar_title_emails">E-mails</string>
+    <string name="no_emails_with_label">Aucun e-mail avec cette étiquette</string>
+    <string name="filter_prefix">Filtre :</string>
+    <string name="all_emails">Tous les e-mails</string>
+    <string name="unread_only">Non lus uniquement</string>
+    <string name="no_emails_in_inbox">Aucun e-mail dans la boîte de réception</string>
 
 </resources>

@@ -1,4 +1,3 @@
-
 package com.example.myemailapp.fragments;
 
 import android.os.Bundle;
@@ -44,54 +43,6 @@ public class EmailDetailFragment extends Fragment {
     }
 
     @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//
-//        Bundle args = getArguments();
-//        if (args == null) return;
-//
-//        // 1) Read the strings out of the bundle
-//        String from      = args.getString("from",      "(no sender)");
-//        String subject   = args.getString("subject",   "(no subject)");
-//        String timestamp = args.getString("timestamp", "");
-//        String body      = args.getString("body",      "");
-//        String labels    = args.getString("labels",    "");
-//
-//        // 2) Bind them to the views
-//        textFrom.setText(from);
-//        textSubject.setText(subject);
-//        textTimestamp.setText(timestamp);
-//        textBody.setText(body);
-//
-//        if (!labels.isEmpty()) {
-//            textLabels.setText(labels);
-//        } else {
-//            textLabels.setText("No labels");
-//        }
-//
-//        // 3) Wire up the back button
-//        buttonBack.setOnClickListener(v ->
-//                requireActivity().getSupportFragmentManager().popBackStack()
-//        );
-//    }
-//    private void bindEmail(Email email) {
-//        textFrom.setText(email.getFrom());
-//        textSubject.setText(email.getSubject() != null
-//                ? email.getSubject()
-//                : "(No Subject)");
-//        textTimestamp.setText(email.getTimeStamp());
-//        textBody.setText(email.getBody() != null
-//                ? email.getBody()
-//                : "");
-//        // Labels: join or show “none”
-//        if (email.getLabels() != null && !email.getLabels().isEmpty()) {
-//            textLabels.setText(TextUtils.join(", ", email.getLabels()));
-//        } else {
-//            textLabels.setText("No labels");
-//        }
-//    }
-
-
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -99,21 +50,21 @@ public class EmailDetailFragment extends Fragment {
         if (args == null) return;
 
         // 1) Read the strings out of the bundle
-        String from      = args.getString("from",      "(no sender)");
-        String subject   = args.getString("subject",   "(no subject)");
+        String from      = args.getString("from",      getString(R.string.no_sender));
+        String subject   = args.getString("subject",   getString(R.string.no_subject));
         String timestamp = args.getString("timestamp", "");
         String body      = args.getString("body",      "");
         String labels    = args.getString("labels",    "");
 
         // 2) Bind them to the views with prefixes
-        textFrom.setText("From: " + from);
-        textSubject.setText("Subject: " + subject);
-        textTimestamp.setText("Timestamp: " + timestamp);
-        textBody.setText("Body: " + body);
+        textFrom.setText(getString(R.string.email_from, from));
+        textSubject.setText(getString(R.string.email_subject, subject));
+        textTimestamp.setText(getString(R.string.email_timestamp, timestamp));
+        textBody.setText(getString(R.string.email_body, body));
         if (!labels.isEmpty()) {
-            textLabels.setText("Labels: " + labels);
+            textLabels.setText(getString(R.string.email_labels, labels));
         } else {
-            textLabels.setText("Labels: No labels");
+            textLabels.setText(getString(R.string.no_labels));
         }
 
         // 3) Wire up the back button
@@ -127,7 +78,7 @@ public class EmailDetailFragment extends Fragment {
 
         String subject = email.getSubject();
         if (subject == null) {
-            textSubject.setText(getString(R.string.email_subject, getString(R.string.email_no_subject)));
+            textSubject.setText(getString(R.string.email_subject, getString(R.string.no_subject)));
         } else {
             textSubject.setText(getString(R.string.email_subject, subject));
         }
@@ -136,18 +87,19 @@ public class EmailDetailFragment extends Fragment {
 
         String body = email.getBody();
         if (body == null) {
-            textBody.setText(getString(R.string.email_body, "")); // Or consider a "no body" string if needed
+            textBody.setText(getString(R.string.email_body, ""));
         } else {
             textBody.setText(getString(R.string.email_body, body));
         }
 
-        // Labels: join or show “none”
+        // Labels: join or show "none"
         if (email.getLabels() != null && !email.getLabels().isEmpty()) {
             textLabels.setText(getString(R.string.email_labels, TextUtils.join(", ", email.getLabels())));
         } else {
-            textLabels.setText(getString(R.string.email_no_labels));
+            textLabels.setText(getString(R.string.no_labels));
         }
     }
+
     // Add a setter for actionHandler if you don't have one
     public void setActionHandler(EmailActionHandler actionHandler) {
         this.actionHandler = actionHandler;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="56dp"
     android:orientation="vertical">
 
@@ -18,23 +18,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Filter:"
+            android:text="@string/filter_prefix"
             android:textSize="16sp" />
 
         <ToggleButton
             android:id="@+id/toggle_unread_only"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOff="All Emails"
-            android:textOn="Unread Only" />
+            android:textOff="@string/all_emails"
+            android:textOn="@string/unread_only" />
     </LinearLayout>
-
-
-
-
-
-
-
 
     <!-- Existing RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
@@ -48,7 +41,7 @@
         android:id="@+id/empty_inbox_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No emails in inbox"
+        android:text="@string/no_emails_in_inbox"
         android:textAlignment="center"
         android:textSize="18sp"
         android:layout_margin="16dp"

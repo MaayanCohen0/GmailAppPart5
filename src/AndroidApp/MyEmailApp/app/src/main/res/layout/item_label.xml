@@ -24,7 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Label Name"
+            android:text="@string/label_name"
             android:textSize="16sp"
             android:textColor="@color/text_primary"
             android:textStyle="normal"
@@ -49,14 +49,12 @@
                 android:scaleType="centerInside"
                 android:background="?android:attr/selectableItemBackgroundBorderless" />
 
-
-
             <!-- Edit Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_edit_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit"
+                android:text="@string/edit_button"
                 android:textSize="12sp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -72,7 +70,7 @@
                 android:id="@+id/btn_delete_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"
+                android:text="@string/delete_button"
                 android:textSize="12sp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"

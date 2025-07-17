@@ -11,7 +11,7 @@
         android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Label name"
+        android:hint="@string/label_name_hint"
         app:boxStrokeColor="@color/primary_color"
         app:hintTextColor="@color/primary_color"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -25,5 +25,4 @@
             android:imeOptions="actionDone" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
 </LinearLayout>
