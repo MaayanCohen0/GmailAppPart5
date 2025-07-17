@@ -10,7 +10,7 @@
     android:background="@android:color/white"
     android:gravity="center_horizontal"
     android:layout_gravity="center"
-    android:layout_marginTop="100dp">
+    android:layout_marginTop="150dp">
 
     <ImageView
         android:id="@+id/home_image"
@@ -18,7 +18,7 @@
         android:layout_height="160dp"
         android:layout_marginBottom="40dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/welcome" />
+        android:src="@drawable/welcome1" />
 
     <TextView
         android:id="@+id/home_welcome_text"

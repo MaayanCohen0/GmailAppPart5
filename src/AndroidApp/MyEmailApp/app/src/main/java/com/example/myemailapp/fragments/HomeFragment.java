@@ -36,7 +36,7 @@ public class HomeFragment extends Fragment {
 
         // Optional: You can set or adjust image dynamically if needed
         ImageView imageView = view.findViewById(R.id.home_image);
-        imageView.setImageResource(R.drawable.welcome);
+        imageView.setImageResource(R.drawable.welcome1);
 
         return view;
     }
