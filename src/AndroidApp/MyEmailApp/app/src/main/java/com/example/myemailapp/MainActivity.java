@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatDelegate;
 import com.bumptech.glide.Glide;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,20 +49,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply theme before calling super.onCreate()
+        applyTheme();
+
         super.onCreate(savedInstanceState);
 
         try {
 
             setContentView(R.layout.activity_main);
 
-
-
             // Get username from token/preferences
             getUsernameFromToken();
             getUserFromPrefs();
             setupToolbar();
             setupNavigationDrawer();
-
 
             NavigationView navView = findViewById(R.id.nav_view);
             navView.setItemIconTintList(null);
@@ -92,11 +93,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Update navigation header with username
             updateNavigationHeader();
 
-
         } catch (Exception e) {
             Log.e(TAG, "Error in MainActivity onCreate", e);
             createFallbackLayout();
         }
+    }
+
+    private void applyTheme() {
+        SharedPreferences prefs = getSharedPreferences("theme", MODE_PRIVATE);
+        boolean isDarkMode = prefs.getBoolean("dark_mode", false);
+
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
+    private void toggleTheme() {
+        SharedPreferences prefs = getSharedPreferences("theme", MODE_PRIVATE);
+        boolean currentDarkMode = prefs.getBoolean("dark_mode", false);
+        boolean newDarkMode = !currentDarkMode;
+
+        // Save the new theme preference
+        prefs.edit().putBoolean("dark_mode", newDarkMode).apply();
+
+        // Apply the new theme
+        if (newDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
+        // Show a toast to indicate the theme change
+//        String message = newDarkMode ? "Dark mode enabled" : "Light mode enabled";
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void setupToolbar() {
@@ -104,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(getString(R.string.app_name));
+                getSupportActionBar().setTitle(getString(R.string.nav_home));
             }
         }
     }
@@ -170,28 +201,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             username = savedUserName;
         }
 
-
         // (Optional) fall back to username if you like
     }
 
-private void updateNavigationHeader() {
-    if (navigationView == null) return;
-    View header = navigationView.getHeaderView(0);
-    if (header == null) return;
+    private void updateNavigationHeader() {
+        if (navigationView == null) return;
+        View header = navigationView.getHeaderView(0);
+        if (header == null) return;
 
-    TextView navFirstName = header.findViewById(R.id.nav_header_firstName);
-    if (navFirstName != null) {
-        String hello = getString(R.string.hello_user, firstName);
-        navFirstName.setText(hello);
+        TextView navFirstName = header.findViewById(R.id.nav_header_firstName);
+        if (navFirstName != null) {
+            String hello = getString(R.string.hello_user, firstName);
+            navFirstName.setText(hello);
+        }
+
+        TextView navUserName = header.findViewById(R.id.nav_header_username);
+        if (navUserName != null) {
+            navUserName.setText(username);
+        }
     }
-
-
-    TextView navUserName = header.findViewById(R.id.nav_header_username);
-    if (navUserName != null) {
-        navUserName.setText(username);
-    }
-
-}
 
     private void loadFragment(Fragment fragment, String title) {
         try {
@@ -218,11 +246,9 @@ private void updateNavigationHeader() {
         layout.setGravity(android.view.Gravity.CENTER);
 
         TextView textView = new TextView(this);
-        //textView.setText("Hello " + username + "!\n\nWelcome to your Email App!\n(Fallback mode)");
         textView.setText(
                 String.format(getString(R.string.hello_user), username)
         );
-
 
         textView.setTextSize(20);
         textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -244,8 +270,8 @@ private void updateNavigationHeader() {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_logout) {
-            logout();
+        if (id == R.id.action_theme_toggle) {
+            toggleTheme();
             return true;
         }
 

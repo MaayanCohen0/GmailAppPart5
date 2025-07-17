@@ -7,7 +7,7 @@
     android:paddingStart="40dp"
     android:paddingEnd="40dp"
     android:paddingBottom="40dp"
-    android:background="@android:color/white"
+    android:background="?android:colorBackground"
     android:gravity="center_horizontal"
     android:layout_gravity="center"
     android:layout_marginTop="150dp">
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="?android:textColorPrimary"
         android:textAlignment="center"
         android:fontFamily="sans-serif-medium"
         android:layout_marginBottom="16dp" />
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textColor="@android:color/black"
+        android:textColor="?android:textColorPrimary"
         android:textStyle="bold"
         android:fontFamily="sans-serif"
         android:textAlignment="center"

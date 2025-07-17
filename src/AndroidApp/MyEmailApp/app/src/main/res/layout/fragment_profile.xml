@@ -23,7 +23,7 @@
                 android:layout_marginBottom="80dp"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="10dp"
-                app:cardBackgroundColor="#F9FAFB">
+                app:cardBackgroundColor="@color/card_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                         android:textStyle="bold"
                         android:fontFamily="sans-serif-medium"
                         android:layout_marginBottom="12dp"
-                        android:textColor="?android:textColorPrimary" />
+                        android:textColor="@color/text_primary" />
 
                     <TextView
                         android:id="@+id/username_text"
@@ -63,7 +63,7 @@
                         android:text="@string/username_prefix"
                         android:textSize="18sp"
                         android:layout_marginBottom="12dp"
-                        android:textColor="?android:textColorPrimary" />
+                        android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/phone_text"
@@ -72,7 +72,7 @@
                         android:text="@string/phone_prefix"
                         android:textSize="18sp"
                         android:layout_marginBottom="12dp"
-                        android:textColor="?android:textColorPrimary" />
+                        android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/birthdate_text"
@@ -81,7 +81,7 @@
                         android:text="@string/birthdate_prefix"
                         android:textSize="18sp"
                         android:layout_marginBottom="12dp"
-                        android:textColor="?android:textColorPrimary" />
+                        android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/gender_text"
@@ -89,7 +89,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/gender_prefix"
                         android:textSize="18sp"
-                        android:textColor="?android:textColorPrimary" />
+                        android:textColor="@color/text_secondary" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
