@@ -48,7 +48,7 @@ public class InboxRepository {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private final MutableLiveData<List<Email>> inboxEmails = new MutableLiveData<>();
-
+    private final MutableLiveData<List<Email>> searchResults = new MutableLiveData<>();
 
     // Retrofit API definition
     private interface InboxRetrofitApi {
@@ -121,6 +121,9 @@ Call<EmailListWrapper> searchEmailsByLabel(@Header("Authorization") String authT
         return isLoading;
     }
 
+    public LiveData<List<Email>> getSearchResults() {
+        return searchResults;
+    }
     public void loadInboxEmails() {
         isLoading.setValue(true);
         api.getInboxEmails(authToken).enqueue(new RetrofitCallback<List<Email>>() {
@@ -308,81 +311,53 @@ Call<EmailListWrapper> searchEmailsByLabel(@Header("Authorization") String authT
 
 
     public void searchEmailsByLabel(String labelName) {
-    isLoading.setValue(true);  // Show loading state
+        isLoading.setValue(true);  // Show loading state
         Log.d(TAG, "Auth token: " + authToken); // Log token for debugging
         Log.d(TAG, "Label name: " + labelName);
-    String token = authToken;
-    if (token == null) {
-        isLoading.postValue(false);
-        errorMessage.postValue("Authentication token not found");
-        Log.e(TAG, "Authentication token not found");
-        return;
-    }
-    try {
-        String encodedLabel = URLEncoder.encode(labelName, StandardCharsets.UTF_8.name());
-        api.searchEmailsByLabel(authToken, encodedLabel).enqueue(new Callback<EmailListWrapper>() {
-            @Override
-            public void onResponse(Call<EmailListWrapper> call, Response<EmailListWrapper> response) {
-                isLoading.postValue(false);
+        String token = authToken;
+        if (token == null) {
+            isLoading.postValue(false);
+            errorMessage.postValue("Authentication token not found");
+            Log.e(TAG, "Authentication token not found");
+            return;
+        }
+        try {
+            String encodedLabel = URLEncoder.encode(labelName, StandardCharsets.UTF_8.name());
+            api.searchEmailsByLabel(authToken, encodedLabel).enqueue(new Callback<EmailListWrapper>() {
+                @Override
+                public void onResponse(Call<EmailListWrapper> call, Response<EmailListWrapper> response) {
+                    isLoading.postValue(false);
 
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Email> emails = response.body().getEmails();
-                    if (emails != null) {
-                        Log.d(TAG, "Loaded " + emails.size() + " emails with label");
-                        // postValue or use `emails` here
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<Email> emails = response.body().getEmails();
+                        if (emails != null) {
+                            Log.d(TAG, "Loaded " + emails.size() + " emails with label");
+                            searchResults.postValue(emails); // ← ADD THIS LINE
+                        } else {
+                            Log.e(TAG, "Email list was null in successful response");
+                            searchResults.postValue(Collections.emptyList()); // ← ADD THIS LINE
+                            errorMessage.postValue("Failed to load emails: no emails found.");
+                        }
                     } else {
-                        Log.e(TAG, "Email list was null in successful response");
-                        errorMessage.postValue("Failed to load emails: no emails found.");
+                        Log.e(TAG, "Failed to search emails: code " + response.code());
+                        searchResults.postValue(Collections.emptyList()); // ← ADD THIS LINE
+                        errorMessage.postValue("Search failed: " + response.code());
                     }
-                } else {
-                    Log.e(TAG, "Failed to search emails: code " + response.code());
-                    errorMessage.postValue("Search failed: " + response.code());
                 }
-            }
 
-            @Override
-            public void onFailure(Call<EmailListWrapper> call, Throwable t) {
-                isLoading.postValue(false);
-                Log.e(TAG, "Error searching emails", t);
-                errorMessage.postValue("Failed to search emails: " + t.getMessage());
-            }
-        });
-//        api.searchEmailsByLabel(authToken, encodedLabel).enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                isLoading.postValue(false);
-//
-//                if (response.isSuccessful() && response.body() != null) {
-//                    try {
-//                        String rawJson = response.body().string();
-//                        Log.d(TAG, "📦 Raw JSON from server:\n" + rawJson);
-//                    } catch (IOException e) {
-//                        Log.e(TAG, "Error reading response body", e);
-//                    }
-//                } else {
-//                    Log.e(TAG, "❌ Response failed: " + response.code());
-//                    if (response.errorBody() != null) {
-//                        try {
-//                            Log.e(TAG, "❌ Error body: " + response.errorBody().string());
-//                        } catch (IOException e) {
-//                            Log.e(TAG, "Error reading error body", e);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                isLoading.postValue(false);
-//                Log.e(TAG, "🔥 Network failure", t);
-//            }
-//        });
-
-    } catch (Exception e){
-
-    }
-
-
+                @Override
+                public void onFailure(Call<EmailListWrapper> call, Throwable t) {
+                    isLoading.postValue(false);
+                    Log.e(TAG, "Error searching emails", t);
+                    searchResults.postValue(Collections.emptyList()); // ← ADD THIS LINE
+                    errorMessage.postValue("Failed to search emails: " + t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            isLoading.postValue(false);
+            searchResults.postValue(Collections.emptyList()); // ← ADD THIS LINE
+            errorMessage.postValue("Error: " + e.getMessage());
+        }
     }
 
     private abstract class RetrofitCallback<T> implements Callback<T> {}
