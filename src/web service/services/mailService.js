@@ -68,11 +68,11 @@ async function createMail({ from, to, subject, body, labels, mailId }) {
     }
   }
 
-  // בדיקת URL שחור בכל המיילים החדשים
+
   for (const mail of newMails) {
     if (searchMailForBlacklistedURLs(mail)) {
       await spamModel.addSpamMailFromNew(mail);
-      return null; // חסימת המייל
+      return null;
     }
   }
 

@@ -47,10 +47,32 @@ const deleteLabel = async (id, userId) => {
   return true;
 };
 
+
+const getLabelByIdWithoutUserId = async (id) => {
+  return await Label.findById(id).exec(); 
+};
+
+function convertLabelsArrayToObjects(labelStrings) {
+  if (!Array.isArray(labelStrings)) return [];
+  return labelStrings.map((label) => ({ name: label }));
+}
+
+const searchAllLabelsArray = async (labelsArray, userId) => {
+  if (!Array.isArray(labelsArray)) return false;
+
+  const userLabels = await Label.find({ userId }).select("name").exec();
+  const userLabelNames = userLabels.map((l) => l.name);
+
+  return labelsArray.every((labelName) => userLabelNames.includes(labelName));
+};
+
 module.exports = {
   getLabels,
   getLabelById,
   addLabel,
   updateLabel,
   deleteLabel,
+  getLabelByIdWithoutUserId,
+  convertLabelsArrayToObjects,
+  searchAllLabelsArray,
 };
