@@ -331,6 +331,7 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
             // Keep the original restore and labels handlers
             buttonRestore.setOnClickListener(v -> listener.onRestoreClick(email));
             buttonLabels.setOnClickListener(v -> listener.onLabelsClick(email));
+            buttonSpam.setOnClickListener(v -> listener.onSpamClick(email));
         }
     }
 

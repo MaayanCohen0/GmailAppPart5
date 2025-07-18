@@ -141,6 +141,9 @@
     <string name="email_no_labels">Étiquettes: Aucune étiquette</string>
     <string name="no_sender">(aucun expéditeur)</string>
     <string name="search_btn">Cherche l\'éttiquette</string>
+    <string name="spam">🚫 Spam</string>
+    <string name="your_spam_folder_is_empty">Votre dossier spam est vide.</string>
+
 
     <string name="add_new_label">Ajouter une nouvelle étiquette</string>
     <string name="label_name_hint">Nom de l\'étiquette</string>

@@ -154,6 +154,8 @@
 
     <string name="no_sender">(no sender)</string>
     <string name="search_btn">Search Label</string>
+    <string name="spam">🚫 Spam</string>
+    <string name="your_spam_folder_is_empty">Your spam folder is empty.</string>
 
 
     <string name="add_new_label">Add New Label</string>
