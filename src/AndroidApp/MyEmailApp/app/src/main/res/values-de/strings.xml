@@ -147,6 +147,9 @@
     <string name="email_no_labels">Etiketten: Keine Etiketten</string>
 
     <string name="search_btn">Etikett Suchen</string>
+    <string name="spam">🚫 Spam</string>
+    <string name="your_spam_folder_is_empty">Dein Spam-Ordner ist leer.</string>
+
 
     <!--    <string name="step_name_title">Geben Sie Ihren Namen ein</string>-->
 <!--    <string name="step_birth_title">Geburtsdatum und Geschlecht</string>-->
