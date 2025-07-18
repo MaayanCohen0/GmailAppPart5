@@ -96,7 +96,12 @@ public class SearchResultViewModel extends AndroidViewModel {
 
     public void loadEmails(String searchType, String searchTerm) {
         _emails.setValue(Resource.loading(null));
-        emailRepository.searchEmailsByLabel(searchTerm);
+        if ("label".equals(searchType)) {
+            emailRepository.searchEmailsByLabel(searchTerm);
+        } else if ("query".equals(searchType)) {
+            emailRepository.searchEmailsByQuery(searchTerm);
+        } else {
+        }
     }
 
     public void refreshEmails() {

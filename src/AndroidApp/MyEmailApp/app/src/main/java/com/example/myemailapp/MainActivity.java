@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myemailapp.fragments.LabelsFragment;
+import com.example.myemailapp.fragments.SearchResultFragment;
 import com.example.myemailapp.ui.login.LoginActivity;
 import com.example.myemailapp.fragments.HomeFragment;
 import com.example.myemailapp.fragments.InboxFragment;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private String firstName = "User";
     private String currentFragment = "home";
+    private EditText searchInput;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         try {
 
             setContentView(R.layout.activity_main);
+
+            searchInput = findViewById(R.id.search_input);
+
+            searchInput.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH ||
+                        (event != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_ENTER && event.getAction() == android.view.KeyEvent.ACTION_DOWN)) {
+
+                    String query = searchInput.getText().toString().trim();
+                    if (!query.isEmpty()) {
+                        openSearchResultFragment(query);
+
+                        android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(searchInput.getWindowToken(), 0);
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            });
+
 
             // Get username from token/preferences
             getUsernameFromToken();
@@ -361,4 +386,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
         finish();
     }
+
+    private void openSearchResultFragment(String query) {
+        Bundle bundle = new Bundle();
+        bundle.putString("search_type", "query");
+        bundle.putString("search_term", query);
+
+        SearchResultFragment searchFragment = new SearchResultFragment();
+        searchFragment.setArguments(bundle);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, searchFragment)
+                .addToBackStack("query_search")
+                .commit();
+    }
+
 }

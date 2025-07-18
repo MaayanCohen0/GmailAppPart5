@@ -109,6 +109,13 @@ public class SearchResultFragment extends Fragment implements EmailAdapter.OnEma
         // Load initial labels
         labelViewModel.loadLabels();
 
+        // in search by query hide it
+        String searchType = getArguments() != null ? getArguments().getString("search_type") : null;
+        if ("query".equals(searchType) && buttonBack != null) {
+            buttonBack.setVisibility(View.GONE);
+        }
+
+
         return view;
     }
 

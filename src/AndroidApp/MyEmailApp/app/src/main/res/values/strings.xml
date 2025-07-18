@@ -186,4 +186,14 @@
     <string name="home_greeting">Hey %1$s!</string>
     <string name="username_default">hihi</string>
 
+    <string name="search_hint">Search for emails…</string>
+    <string name="search_icon_desc">Search icon</string>
+
+    <string name="toolbar_title_search_results">Search Results</string>
+    <string name="search_placeholder">Search for email content</string>
+    <string name="no_mails_with_content">No emails found with that content.</string>
+    <string name="no_label_found">No matching label found for this email.</string>
+    <string name="no_query_results">No emails found matching this search query.</string>
+
+
 </resources>

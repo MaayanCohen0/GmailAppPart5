@@ -173,4 +173,15 @@
     <string name="home_greeting">Bonjour %1$s!</string>
     <string name="username_default">hihi</string>
 
+    <string name="search_hint">Rechercher des e-mails…</string>
+    <string name="search_icon_desc">Icône de recherche</string>
+
+    <string name="search_placeholder">Rechercher dans le contenu des e-mails</string>
+    <string name="no_mails_with_content">Aucun e-mail trouvé avec ce contenu.</string>
+    <string name="toolbar_title_search_results">Résultats de recherche</string>
+    <string name="no_label_found">Aucun libellé correspondant trouvé pour cet e-mail.</string>
+    <string name="no_query_results">Aucun e-mail correspondant à cette requête de recherche trouvé.</string>
+
+
+
 </resources>

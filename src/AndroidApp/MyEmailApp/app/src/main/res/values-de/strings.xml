@@ -227,6 +227,16 @@
     <string name="username_default">hihi</string>
    <string name="spam">🚫 Spam</string>
     <string name="your_spam_folder_is_empty">Dein Spam-Ordner ist leer.</string>
+    <string name="search_hint">Nach E-Mails suchen…</string>
+    <string name="search_icon_desc">Suchsymbol</string>
+    <string name="search_placeholder">Nach E-Mail-Inhalt suchen</string>
+    <string name="no_mails_with_content">Keine E-Mails mit diesem Inhalt gefunden.</string>
+    <string name="toolbar_title_search_results">Suchergebnisse</string>
+    <string name="no_label_found">Kein passendes Label für diese E-Mail gefunden.</string>
+    <string name="no_query_results">Keine E-Mails gefunden, die dieser Suchanfrage entsprechen.</string>
+
+
+
 
 
 

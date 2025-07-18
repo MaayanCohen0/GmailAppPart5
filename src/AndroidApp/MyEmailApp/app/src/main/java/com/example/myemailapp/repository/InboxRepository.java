@@ -86,6 +86,12 @@ Call<EmailListWrapper> searchEmailsByLabel(@Header("Authorization") String authT
 //        @GET("searchAll/label/{labelName}")
 //        Call<ResponseBody> searchEmailsByLabel(@Header("Authorization") String authToken,
 //                                               @Path(value = "labelName", encoded = true) String labelName);
+@GET("mails/search/{query}")
+Call<EmailListWrapper> searchEmailsByQuery(
+        @Header("Authorization") String authToken,
+        @Path(value = "query", encoded = true) String query
+);
+
 
     }
 
@@ -359,6 +365,47 @@ Call<EmailListWrapper> searchEmailsByLabel(@Header("Authorization") String authT
             errorMessage.postValue("Error: " + e.getMessage());
         }
     }
+
+    public void searchEmailsByQuery(String query) {
+        isLoading.setValue(true);
+        try {
+            String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.name());
+            api.searchEmailsByQuery(authToken, encodedQuery).enqueue(new Callback<EmailListWrapper>() {
+                @Override
+                public void onResponse(Call<EmailListWrapper> call, Response<EmailListWrapper> response) {
+                    isLoading.postValue(false);
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<Email> emails = response.body().getEmails();
+                        if (emails != null) {
+                            Log.d(TAG, "Loaded " + emails.size() + " emails from query search");
+                            searchResults.postValue(emails);
+                        } else {
+                            Log.e(TAG, "Email list null in query search response");
+                            searchResults.postValue(Collections.emptyList());
+                            errorMessage.postValue("No emails found for query.");
+                        }
+                    } else {
+                        Log.e(TAG, "Failed to search emails by query: " + response.code());
+                        searchResults.postValue(Collections.emptyList());
+                        errorMessage.postValue("Search failed: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<EmailListWrapper> call, Throwable t) {
+                    isLoading.postValue(false);
+                    Log.e(TAG, "Error searching emails by query", t);
+                    searchResults.postValue(Collections.emptyList());
+                    errorMessage.postValue("Failed to search emails: " + t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            isLoading.postValue(false);
+            searchResults.postValue(Collections.emptyList());
+            errorMessage.postValue("Error: " + e.getMessage());
+        }
+    }
+
 
     private abstract class RetrofitCallback<T> implements Callback<T> {}
 }
