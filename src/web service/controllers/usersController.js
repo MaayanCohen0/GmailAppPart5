@@ -2,7 +2,8 @@ const multer = require("multer");
 const upload = require("../utils/uploadPic");
 //const {loadUsers} = require('../models/usersModel');
 
-const userModel = require("../models/usersModel");
+// const userModel = require("../services/userService");
+const userService = require("../services/userService");
 const {
   isValidName,
   isValidUsername,
@@ -16,9 +17,9 @@ const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET || "supersecret"; // use env var in real apps
 
 // get user by id
-exports.getUserById = (req, res) => {
+exports.getUserById = async (req, res) => {
   const { id } = req.params;
-  const user = userModel.getUserById(id);
+  const user = await userService.getUserById(id);
 
   // not found - return 404 status
   if (!user) {
@@ -30,10 +31,10 @@ exports.getUserById = (req, res) => {
 };
 
 // get user by id
-exports.getUserDetails = (req, res) => {
+exports.getUserDetails = async (req, res) => {
   //const { id } = req.params;
   const id = req.userId; // comes from the token
-  const user = userModel.getUserById(id);
+  const user = await userService.getUserById(id);
 
   // not found - return 404 status
   if (!user) {
@@ -44,7 +45,7 @@ exports.getUserDetails = (req, res) => {
   res.status(200).json(user);
 };
 
-exports.createUser = (req, res) => {
+exports.createUser = async (req, res) => {
   upload.single("profilePic")(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
       return res
@@ -104,7 +105,7 @@ exports.createUser = (req, res) => {
     }
 
     // Check if username already exists
-    if (userModel.findUserByUsername(username)) {
+    if (await userService.findUserByUsername(username)) {
       return res.status(409).json({ error: "Username already exists" });
     }
 
@@ -114,7 +115,7 @@ exports.createUser = (req, res) => {
       profilePic = `/uploads/${username}/${req.file.filename}`;
     }
 
-    const newUser = userModel.createUser({
+    const newUser = await userService.createUser({
       firstName,
       lastName,
       username,
@@ -148,7 +149,7 @@ exports.login = async (req, res) => {
     return res.status(400).json({ error: "Missing credentials" });
   }
 
-  userJson = userModel.checkUserByUsernameAndPassword(username, password);
+  userJson = await userService.checkUserByUsernameAndPassword(username, password);
   if (!userJson) {
     return res.status(401).json({ error: "Invalid username or password" });
   }
@@ -172,9 +173,9 @@ exports.login = async (req, res) => {
   });
 };
 
-exports.getUserByToken = (req, res) => {
+exports.getUserByToken = async (req, res) => {
   const userId = req.userId;
-  const user = userModel.getUserById(userId);
+  const user = await userService.getUserById(userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
@@ -185,7 +186,7 @@ exports.getUserByToken = (req, res) => {
 
 exports.checkUsernameExists = async (req, res) => {
   try {
-    const user = await userModel.findUserByUsername(req.params.username);
+    const user = await userService.findUserByUsername(req.params.username);
     if (!user) return res.status(200).json({ exists: false });
     res.status(200).json({ exists: true });
   } catch (err) {

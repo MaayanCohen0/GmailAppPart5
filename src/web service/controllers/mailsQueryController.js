@@ -1,5 +1,5 @@
 const queryMailsModel = require("../models/mailsModel");
-const { getUserById } = require("../models/usersModel");
+const { getUserById } = require("../services/userService");
 const { saveSearchQuery } = require("../models/searchHistoryModel");
 const { getLastSearchQueries } = require("../models/searchHistoryModel");
 const { deleteSearchQueriesByUserId } = require("../models/searchHistoryModel");
