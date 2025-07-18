@@ -1,4 +1,4 @@
-const queryMailsModel = require("../models/mailsModel");
+
 const { getUserById } = require("../services/userService");
 const { saveSearchQuery } = require("../models/searchHistoryModel");
 const { getLastSearchQueries } = require("../models/searchHistoryModel");
@@ -23,7 +23,7 @@ exports.searchMails = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
 
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
@@ -36,7 +36,7 @@ exports.searchMails = async (req, res) => {
     );
     // Save the search query to the history
   if (saveSearch) {
-      saveSearchQuery(userId, query);
+      await saveSearchQuery(userId, query);
     }
     return res.status(200).json({
       message: "Mails retrieved successfully",
@@ -50,19 +50,19 @@ exports.searchMails = async (req, res) => {
   }
 };
 
-exports.getLastSearches = (req, res) => {
+exports.getLastSearches = async (req, res) => {
   const userId = req.userId;
   const amount = 6;
   // get last 6 searches for the user
   if (!userId) {
     return res.status(400).json({ error: "User ID is required" });
   }
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
   try {
-    const lastSearches = getLastSearchQueries(userId, amount);
+    const lastSearches = await getLastSearchQueries(userId, amount);
     // res.json(lastSearches);
     return res.status(200).json({
       userId,
@@ -78,18 +78,18 @@ exports.getLastSearches = (req, res) => {
   }
 };
 
-exports.clearHistory = (req, res) => {
+exports.clearHistory = async (req, res) => {
   const userId = req.userId;;
   if (!userId) {
     return res.status(400).json({ error: "Missing user-id" });
   }
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
 
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
   try {
-    deleteSearchQueriesByUserId(userId);
+    await deleteSearchQueriesByUserId(userId);
     res.status(204).send();
   }
   catch (err) {
@@ -100,7 +100,7 @@ exports.clearHistory = (req, res) => {
   }
 };
 
-exports.deleteSingleQuery = (req, res) => {
+exports.deleteSingleQuery = async (req, res) => {
   const userId = req.userId;
   const query = decodeURIComponent(req.params.query);
 
@@ -108,13 +108,13 @@ exports.deleteSingleQuery = (req, res) => {
     return res.status(400).json({ error: "Missing userId or query" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
 
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
   try {
-    deleteOneSearchQuery(userId, query);
+    await deleteOneSearchQuery(userId, query);
     res.status(200).json({ message: "Query deleted" });
   }
   catch (err) {
