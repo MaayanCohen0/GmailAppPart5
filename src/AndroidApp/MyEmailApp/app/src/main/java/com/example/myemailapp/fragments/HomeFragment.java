@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+
+import com.example.myemailapp.R;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -16,37 +18,26 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         // Get username from SharedPreferences
-        String username = "Moo"; // default
+        String username = getString(R.string.username_default);
         if (getContext() != null) {
             SharedPreferences prefs = getContext().getSharedPreferences("auth", MODE_PRIVATE);
-            username = prefs.getString("username", "Moo");
+            username = prefs.getString("username", username);
         }
 
-        // Create the layout programmatically
-        LinearLayout layout = new LinearLayout(getContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(60, 80, 60, 60);
-        layout.setGravity(android.view.Gravity.CENTER);
+        // Set greeting text
+        TextView welcomeText = view.findViewById(R.id.home_welcome_text);
+        welcomeText.setText(getString(R.string.home_greeting, username));
 
-        // Welcome message
-        TextView welcomeText = new TextView(getContext());
-        welcomeText.setText("Hello " + username + "!");
-        welcomeText.setTextSize(28);
-        welcomeText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        welcomeText.setPadding(0, 0, 0, 40);
-        welcomeText.setTextColor(0xFF2196F3); // Blue color
+        // Set description
+        TextView descText = view.findViewById(R.id.home_description);
 
-        // App description
-        TextView descText = new TextView(getContext());
-        descText.setText("Welcome to your Email App!\n\nUse the menu to navigate between:\n• Inbox - View received emails\n• Sent - View sent emails\n• Spam - Check spam folder");
-        descText.setTextSize(16);
-        descText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        descText.setLineSpacing(8, 1.2f);
+        // Optional: You can set or adjust image dynamically if needed
+        ImageView imageView = view.findViewById(R.id.home_image);
+        imageView.setImageResource(R.drawable.welcome1);
 
-        layout.addView(welcomeText);
-        layout.addView(descText);
-
-        return layout;
+        return view;
     }
 }

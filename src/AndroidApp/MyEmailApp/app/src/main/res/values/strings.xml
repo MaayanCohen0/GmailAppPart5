@@ -152,57 +152,38 @@
     <string name="email_labels">Labels: %s</string>
     <string name="email_no_labels">Labels: No labels</string>
 
-
+    <string name="no_sender">(no sender)</string>
     <string name="search_btn">Search Label</string>
     <string name="spam">🚫 Spam</string>
     <string name="your_spam_folder_is_empty">Your spam folder is empty.</string>
 
-    <!--    <string name="step_name_title">Enter Your Name</string>-->
-<!--    <string name="step_birth_title">Birth Date & Gender</string>-->
-<!--    <string name="step_username_title">Choose Username</string>-->
-<!--    <string name="step_password_title">Create Password</string>-->
-<!--    <string name="step_phone_title">Phone Number</string>-->
-<!--    <string name="step_profile_title">Profile Picture (Optional)</string>-->
-<!--    <string name="next_button">Next</string>-->
-<!--    <string name="signup_button">Sign Up</string>-->
-<!--    <string name="back_to_login_button">Back to Login</string>-->
-<!--    <string name="back_button">Back</string>-->
 
+    <string name="add_new_label">Add New Label</string>
+    <string name="label_name_hint">Label name</string>
+    <string name="back_button">Back</string>
+    <string name="labels_prefix">Labels:</string>
 
+    <string name="search_labels_hint">Search labels...</string>
+    <string name="no_labels_found">No labels found</string>
+    <string name="create_label_prompt">Tap the + button to create your first label</string>
+    <string name="add_label">Add label</string>
+    <string name="name_prefix">Name: %s</string>
+    <string name="username_prefix">Username: %s</string>
+    <string name="phone_prefix">Phone: %s</string>
+    <string name="birthdate_prefix">Birthdate: %s</string>
+    <string name="gender_prefix">Gender: %s</string>
 
-<!--    <string name="first_name_required">First name is required</string>-->
-<!--    <string name="first_name_invalid">First name must contain only English letters</string>-->
-<!--    <string name="last_name_required">Last name is required</string>-->
-<!--    <string name="last_name_invalid">Last name must contain only English letters</string>-->
-<!--    <string name="birth_date_required">Birth date is required</string>-->
-<!--    <string name="birth_date_future">Birth date must be in the past</string>-->
-<!--    <string name="birth_date_invalid">Invalid date format</string>-->
-<!--    <string name="gender_required">Please select a gender</string>-->
-<!--    <string name="username_required">Username is required</string>-->
-<!--    <string name="username_too_short">Username must be at least 3 characters</string>-->
-<!--    <string name="username_invalid">Username must contain only English letters and numbers</string>-->
-<!--    <string name="username_exists">Username already exists. Please choose a different one</string>-->
-<!--    <string name="username_validation_failed">Failed to validate username. Please try again.</string>-->
-<!--    <string name="username_network_error">Network error. Please try again.</string>-->
-<!--    <string name="password_required">Password is required</string>-->
-<!--    <string name="password_too_short">Password must be at least 6 characters</string>-->
-<!--    <string name="password_contains_space">Password cannot contain spaces</string>-->
-<!--    <string name="confirm_password_required">Please confirm your password</string>-->
-<!--    <string name="passwords_not_match">Passwords must match</string>-->
-<!--    <string name="phone_required">Phone number is required</string>-->
-<!--    <string name="phone_invalid">Phone number must be 10 digits long and start with '05'</string>-->
-<!--    <string name="invalid_image_file">Please select a valid image file</string>-->
-<!--    <string name="no_image_selected">No image selected</string>-->
-<!--    <string name="image_upload_error">Error preparing image for upload</string>-->
-<!--    <string name="invalid_image_type">Please upload a valid image file (jpg, jpeg, png, gif)</string>-->
-<!--    <string name="file_chooser_error">Unable to open file chooser</string>-->
-<!--    <string name="file_access_error">Unable to access files</string>-->
-<!--    <string name="storage_permission_denied">Permission denied to access storage</string>-->
-<!--    <string name="registration_failed">Registration failed</string>-->
-<!--    <string name="network_error">Network error: %1$s</string>-->
-<!--    <string name="registering">Registering...</string>-->
-<!--    <string name="username_not_available">Please choose a different username</string>-->
+    <string name="label_name">Label Name</string>
+    <string name="edit_button">Edit</string>
+    <string name="delete_button">Delete</string>
+    <string name="toolbar_title_emails">Emails</string>
+    <string name="no_emails_with_label">No emails with this label</string>
+    <string name="filter_prefix">Filter:</string>
+    <string name="all_emails">All Emails</string>
+    <string name="unread_only">Unread Only</string>
+    <string name="no_emails_in_inbox">No emails in inbox</string>
 
-
+    <string name="home_greeting">Hey %1$s!</string>
+    <string name="username_default">hihi</string>
 
 </resources>

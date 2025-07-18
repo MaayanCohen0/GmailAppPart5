@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -144,7 +146,7 @@ public class LabelsFragment extends Fragment implements LabelAdapter.LabelClickL
         TextInputEditText editText = dialogView.findViewById(R.id.edit_text_label_name);
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Add New Label")
+                .setTitle(R.string.add_new_label)
                 .setView(dialogView)
                 .setPositiveButton("Add", (dialog, which) -> {
                     String labelName = editText.getText().toString().trim();
@@ -221,10 +223,40 @@ public class LabelsFragment extends Fragment implements LabelAdapter.LabelClickL
         showDeleteConfirmationDialog(label);
     }
 
-//    @Override
-//    public void onSearchClick(Label label) {
-//
-//    }
+    @Override
+    public void onSearchClick(Label label) {
+        // Create a bundle to pass the label information to the search fragment
+        Bundle bundle = new Bundle();
+
+        // Check if this is a draft label
+        if (label.getName().equalsIgnoreCase("draft") || label.getName().equalsIgnoreCase("drafts")) {
+            bundle.putString("search_type", "draft");
+            bundle.putString("search_term", "draft");
+        } else {
+            bundle.putString("search_type", "label");
+            bundle.putString("search_term", label.getName());
+        }
+
+        // Add label ID for tracking (useful for recently edited labels)
+        bundle.putString("label_id", label.getId());
+
+        // Create the search result fragment
+        SearchResultFragment searchFragment = new SearchResultFragment();
+        searchFragment.setArguments(bundle);
+
+        // Navigate to the search fragment
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        // Replace current fragment with search results
+        transaction.replace(R.id.fragment_container, searchFragment);
+
+        // Add to back stack so user can navigate back
+        transaction.addToBackStack("label_search");
+
+        // Commit the transaction
+        transaction.commit();
+    }
 
     @Override
     public void onResume() {

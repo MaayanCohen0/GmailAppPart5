@@ -23,6 +23,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -33,6 +34,8 @@ public class ApiClient {
 
     public static Retrofit getClient(Context ctx) {
         if (retrofit == null) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
             // Interceptor reads the token from prefs
             Interceptor authInterceptor = chain -> {
                 SharedPreferences prefs = ctx.getSharedPreferences("auth", Context.MODE_PRIVATE);

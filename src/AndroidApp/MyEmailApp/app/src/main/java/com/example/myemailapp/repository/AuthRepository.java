@@ -61,15 +61,19 @@ public class AuthRepository {
 
                     } else {
                         String errorMsg = "Login failed";
+                        String cleanError = errorMsg;
                         if (response.errorBody() != null) {
                             try {
                                 errorMsg = response.errorBody().string();
+                                cleanError = errorMsg.replaceAll("[{}\"]", "")
+                                        .replace("error:", "")
+                                        .trim();
                             } catch (Exception e) {
                                 errorMsg = "Login failed with code: " + response.code();
                             }
                         }
                         Log.e(TAG, "Login failed: " + response.code() + " " + errorMsg);
-                        loginResult.postValue(new LoginResult(false, errorMsg, null));
+                        loginResult.postValue(new LoginResult(false, cleanError, null));
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Error processing login response", e);

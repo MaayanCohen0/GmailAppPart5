@@ -12,15 +12,15 @@
         android:paddingTop="64dp">
 
         <!-- Search View -->
-<!--        <androidx.appcompat.widget.SearchView-->
-<!--            android:id="@+id/search_view_labels"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="16dp"-->
-<!--            android:background="@drawable/search_view"-->
-<!--            android:iconifiedByDefault="false"-->
-<!--            android:queryHint="Search labels..."-->
-<!--            app:iconifiedByDefault="false" />-->
+        <!--        <androidx.appcompat.widget.SearchView-->
+        <!--            android:id="@+id/search_view_labels"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_margin="16dp"-->
+        <!--            android:background="@drawable/search_view"-->
+        <!--            android:iconifiedByDefault="false"-->
+        <!--            android:queryHint="@string/search_labels_hint"-->
+        <!--            app:iconifiedByDefault="false" />-->
 
         <!-- Labels RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -53,7 +53,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No labels found"
+                android:text="@string/no_labels_found"
                 android:textSize="18sp"
                 android:textColor="@color/secondary_text"
                 android:layout_marginBottom="8dp" />
@@ -61,7 +61,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tap the + button to create your first label"
+                android:text="@string/create_label_prompt"
                 android:textSize="14sp"
                 android:textColor="@color/secondary_text"
                 android:gravity="center" />
@@ -78,10 +78,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
-        android:contentDescription="Add label"
+        android:contentDescription="@string/add_label"
         app:tint="@color/white"
         app:fabCustomSize="64dp" />
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

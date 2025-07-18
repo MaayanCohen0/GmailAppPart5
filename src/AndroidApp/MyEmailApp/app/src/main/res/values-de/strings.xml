@@ -146,9 +146,9 @@
     <string name="email_labels">Etiketten: %s</string>
     <string name="email_no_labels">Etiketten: Keine Etiketten</string>
 
+    <string name="add_new_label">Neues Etikett hinzufügen</string>
     <string name="search_btn">Etikett Suchen</string>
-    <string name="spam">🚫 Spam</string>
-    <string name="your_spam_folder_is_empty">Dein Spam-Ordner ist leer.</string>
+
 
 
     <!--    <string name="step_name_title">Geben Sie Ihren Namen ein</string>-->
@@ -197,6 +197,36 @@
 
 
 
+
+
+    <string name="no_sender">(kein Absender)</string>
+    <string name="label_name_hint">Etikettenname</string>
+    <string name="back_button">Zurück</string>
+    <string name="labels_prefix">Etiketten:</string>
+    <string name="search_labels_hint">Etiketten suchen...</string>
+    <string name="no_labels_found">Keine Etiketten gefunden</string>
+    <string name="create_label_prompt">Tippen Sie auf die +-Schaltfläche, um Ihr erstes Etikett zu erstellen</string>
+    <string name="add_label">Etikett hinzufügen</string>
+    <string name="name_prefix">Name: %s</string>
+    <string name="username_prefix">Benutzername: %s</string>
+    <string name="phone_prefix">Telefon: %s</string>
+    <string name="birthdate_prefix">Geburtsdatum: %s</string>
+    <string name="gender_prefix">Geschlecht: %s</string>
+
+    <string name="label_name">Etikettenname</string>
+    <string name="edit_button">Bearbeiten</string>
+    <string name="delete_button">Löschen</string>
+    <string name="toolbar_title_emails">E-Mails</string>
+    <string name="no_emails_with_label">Keine E-Mails mit diesem Etikett</string>
+    <string name="filter_prefix">Filter:</string>
+    <string name="all_emails">Alle E-Mails</string>
+    <string name="unread_only">Nur ungelesene</string>
+    <string name="no_emails_in_inbox">Keine E-Mails im Posteingang</string>
+
+    <string name="home_greeting">Hallo %1$s!</string>
+    <string name="username_default">hihi</string>
+   <string name="spam">🚫 Spam</string>
+    <string name="your_spam_folder_is_empty">Dein Spam-Ordner ist leer.</string>
 
 
 

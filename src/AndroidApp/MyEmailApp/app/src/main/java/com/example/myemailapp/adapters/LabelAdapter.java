@@ -3,6 +3,7 @@ package com.example.myemailapp.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +22,7 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
         void onEditClick(Label label);
         void onDeleteClick(Label label);
 
-//        void onSearchClick(Label label);
+        void onSearchClick(Label label);
     }
 
     public LabelAdapter(List<Label> labels, LabelClickListener listener) {
@@ -59,7 +60,7 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
         private MaterialButton btnEdit;
         private MaterialButton btnDelete;
 
-        private MaterialButton btnSearch;
+        private ImageButton btnSearch;
 
         public LabelViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,6 +68,7 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
             labelName = itemView.findViewById(R.id.text_view_label_name);
             btnEdit = itemView.findViewById(R.id.btn_edit_label);
             btnDelete = itemView.findViewById(R.id.btn_delete_label);
+            btnSearch = itemView.findViewById(R.id.btn_search_label);
         }
 
         public void bind(Label label) {
@@ -84,11 +86,11 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
                 }
             });
 
-//            btnSearch.setOnClickListener(v -> {
-//                if (listener != null) {
-//                    listener.onSearchClick(label);
-//                }
-//            });
+            btnSearch.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onSearchClick(label);
+                }
+            });
 
             // Optional: Add some visual feedback
             cardView.setOnClickListener(v -> {
