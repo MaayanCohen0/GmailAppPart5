@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTag = "profile";
         }
 
-        if (fragment != null && !fragmentTag.equals(currentFragment)) {
+        if (fragment != null) {
             loadFragment(fragment, title);
             currentFragment = fragmentTag;
         }
