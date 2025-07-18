@@ -4,7 +4,7 @@ const { searchAllLabelsArray } = require("../services/labelsService");
 const draftService = require("../services/draftService");
 const mailService = require("../services/mailService");
 
-
+/*
 exports.writeNewDraft = async (req, res) => {
   let { subject, body } = req.body;
   let labels = [];
@@ -26,7 +26,50 @@ exports.writeNewDraft = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
+  if (!userById) {
+    return res.status(404).json({ error: "User with this user-id not found" });
+  }
+
+  const from = userById.username;
+  console.log("**************************From:****************************", from);
+
+  if (!findUserByUsername(from)) {
+    return res.status(404).json({ error: "Sender dosen't exist" });
+  }
+
+  console.log("Draft data:", { from, to, subject, body, labels, mailType: null});
+  //const from1 = "maayan";
+  try {
+    const newDraft = await draftService.createDraft({ from, to, subject, body, labels, mailType: null, draftId: null });
+
+    if (!newDraft) {
+      return res.status(500).json({ message: "Failed to create draft" });
+    }
+
+    return res.status(201).json({ message: "Draft saved successfully", draft: newDraft });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || "Failed to create draft" });
+  }
+};
+
+*/
+
+exports.writeNewDraft = async (req, res) => {
+  const { subject, body } = req.body;
+  let { to = [] } = req.body;
+  const labels = [];
+
+  const userId = req.userId;
+
+  if (!to) to = [];
+  if (!Array.isArray(to)) to = [to];
+
+  if (!userId) {
+    return res.status(401).json({ error: "Valid user-id is required" });
+  }
+
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -34,14 +77,19 @@ exports.writeNewDraft = async (req, res) => {
   const from = userById.username;
 
   if (!findUserByUsername(from)) {
-    return res.status(404).json({ error: "Sender dosen't exist" });
+    return res.status(404).json({ error: "Sender doesn't exist" });
+  }
+
+  const invalidRecipients = to.filter((username) => !findUserByUsername(username));
+  if (invalidRecipients.length > 0) {
+    return res.status(400).json({ error: "Some recipients do not exist", invalidRecipients });
   }
 
   try {
-    const newDraft = await draftService.createDraft(from, { from, to, subject, body, labels });
+    const newDraft = await draftService.createDraft({ from, to, subject, body, labels });
 
     if (!newDraft) {
-      return res.status(500).json({ message: "Failed to update draft" });
+      return res.status(500).json({ message: "Failed to create draft" });
     }
 
     return res.status(201).json({ message: "Draft saved successfully", draft: newDraft });
@@ -59,7 +107,7 @@ exports.deleteDraft = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const username = getUserById(userId).username;
+  const username = (await getUserById(userId)).username;
 
   const draft = await draftService.getDraftById(draftId, username);
   if (!draft) {
@@ -81,7 +129,7 @@ exports.getAllDraftsOfUser = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -105,12 +153,13 @@ exports.getDraftById = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
 
   const username = userById.username;
+  console.log("Username for checking:", username);
   const draft = await draftService.getDraftById(id, username);
 
   if (!draft) {
@@ -133,7 +182,7 @@ exports.readDraft = async (req, res) => {
     return res.status(400).json({ error: "Missing required fields - id of draft" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -165,7 +214,7 @@ exports.unreadDraft = async (req, res) => {
     return res.status(400).json({ error: "Missing required fields - id of draft" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -199,7 +248,7 @@ exports.editDraft = async (req, res) => {
     return res.status(400).json({ error: "Missing required fields - id of draft" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -310,7 +359,7 @@ exports.updateLabelsInDraft = async (req, res) => {
 
   const uniqueLabels = [...new Set(labels)];
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -341,7 +390,7 @@ exports.unstarredDraft = async (req, res) => {
     return res.status(400).json({ error: "Missing required fields - id of mail" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -371,7 +420,7 @@ exports.starredDraft = async (req, res) => {
     return res.status(400).json({ error: "Missing required fields - id of mail" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -400,7 +449,7 @@ exports.getAllDraftsOfUser = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
 
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });

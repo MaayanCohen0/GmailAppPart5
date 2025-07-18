@@ -3,8 +3,8 @@ const { v4: uuidv4 } = require("uuid");
 
 const draftSchema = new mongoose.Schema({
   id:       { type: String, required: true, index: true },  
-  owner:    { type: String },  
-  from:     { type: String,  },
+  owner:    { type: String, required: true, index: true },  
+  from:     { type: String, required: true },
   to:       { type: [String], default: [] },
  subject:  { type: String, default: "" },
   body:     { type: String, default: "" },
@@ -15,6 +15,6 @@ const draftSchema = new mongoose.Schema({
   isStarred:{ type: Boolean, default: false },
 });
 
-//draftSchema.index({ id:1, owner:1 }, { unique: true });
+draftSchema.index({ id:1, owner:1 }, { unique: true });
 
 module.exports = mongoose.model('Draft', draftSchema);

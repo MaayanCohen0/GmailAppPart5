@@ -3,7 +3,7 @@ const blacklistModel = require("../models/blacklistModel");
 const labelsModel = require("../models/labelsModel");
 const { v4: uuidv4 } = require("uuid");
 
-
+/*
 const getAllDrafts = async (username) => {
   return Draft.find({ owner: username }).exec();
 };
@@ -11,7 +11,19 @@ const getAllDrafts = async (username) => {
 const getDraftById = async (id, username) => {
   return Draft.findOne({ id, owner: username }).exec();
 };
+*/
 
+async function getAllDrafts(username) {
+  return await Draft.find({ owner: username }).sort({ timeStamp: -1 });
+}
+
+async function getDraftById(id, username) {
+  return await Draft.findOne({ id, owner: username });
+  //return await Draft.findOne({ id });
+}
+
+
+/*
 const createDraft = async (username, draftData) => {
 
   const uniqueTo = Array.isArray(draftData.to)
@@ -35,6 +47,143 @@ const createDraft = async (username, draftData) => {
 
   return await newDraft.save();
 };
+
+*/
+
+/*
+async function createDraft({ from, to, subject, body, labels, mailType, draftId }) {
+  const timeStamp = new Date();
+
+  const recipients = Array.isArray(to) ? to : [to];
+  const uniqueTo = [...new Set(recipients.filter((r) => typeof r === "string"))];
+
+  const uniqueLabels = Array.isArray(labels)
+    ? [...new Set(labels.filter((label) => typeof label === "string"))]
+    : [];
+
+  const id = draftId || uuidv4();
+
+  const newDraft = new Draft({
+    id,
+    from,
+    owner: from,
+    to: uniqueTo,
+    subject: subject || "",
+    body: body || "",
+    labels: uniqueLabels,
+    mailType: mailType || "",
+    timeStamp,
+    isRead: false,
+    isStarred: false,
+  });
+
+  try {
+    const savedDraft = await newDraft.save();
+    return savedDraft;
+  } catch (error) {
+    console.error("Failed to create draft:", error);
+    console.log("Failed to create draft:", error);
+    return null;
+  }
+}
+*/
+
+
+
+/*
+
+async function createDraft({ from, to, subject, body, labels, mailType, draftId }) {
+  //from = from || "maayan"; // Default to "maayan" if from is not provided
+  console.log("createDraft called with:");
+  console.log("from:", from);
+  console.log("to:", to);
+  console.log("subject:", subject);
+  console.log("body:", body);
+  console.log("labels:", labels);
+  console.log("mailType:", mailType);
+  console.log("draftId:", draftId);
+
+  const timeStamp = new Date();
+
+  const recipients = Array.isArray(to) ? to : [to];
+  const uniqueTo = [...new Set(recipients.filter((r) => typeof r === "string"))];
+
+  console.log("uniqueTo:", uniqueTo);
+
+  const uniqueLabels = Array.isArray(labels)
+    ? [...new Set(labels.filter((label) => typeof label === "string"))]
+    : [];
+
+  console.log("uniqueLabels:", uniqueLabels);
+
+  const id = draftId || uuidv4();
+  console.log("final draft id:", id);
+
+  const newDraft = new Draft({
+    id,
+    from: from,
+    owner: from,
+    to: uniqueTo,
+    subject: subject || "",
+    body: body || "",
+    labels: uniqueLabels,
+    mailType: mailType || "",
+    timeStamp,
+    isRead: false,
+    isStarred: false,
+  });
+
+  //console.log("newDraft to be saved:", newDraft);
+
+  try {
+    const savedDraft = await newDraft.save();
+    console.log("Draft saved successfully:", savedDraft);
+    return savedDraft;
+  } catch (error) {
+    console.error("Failed to create draft:", error);
+    return null;
+  }
+}
+
+*/
+
+const createDraft = async ({ from, to, subject, body, labels }) => {
+  try {
+    const timeStamp = new Date();
+
+    const recipients = Array.isArray(to) ? to : [to];
+    const uniqueTo = [
+      ...new Set(recipients.filter((r) => typeof r === "string")),
+    ];
+
+    const uniqueLabels = Array.isArray(labels)
+      ? [...new Set(labels.filter((label) => typeof label === "string"))]
+      : [];
+
+    const id = uuidv4();
+
+    const newDraft = new Draft({
+      id,
+      from,
+      owner: from,
+      to: uniqueTo,
+      subject: subject || "",
+      body: body || "",
+      labels: uniqueLabels,
+      mailType: "",
+      timeStamp,
+      isRead: false,
+      isStarred: false,
+    });
+
+    const savedDraft = await newDraft.save();
+    return savedDraft;
+  } catch (err) {
+    console.error("Error creating draft:", err);
+    return null;
+  }
+};
+
 
 const editDraft = async (id, username, updateData) => {
   if (updateData.to) {
@@ -73,25 +222,82 @@ const createCopyOfDraft = async (draft) => {
 };
 
 
-
+/*
 const markReadDraft = async (id, username) => {
   return Draft.findOneAndUpdate({ id, owner: username }, { isRead: true }, { new: true }).exec();
 };
 
 
+
 const markUnreadDraft = async (id, username) => {
   return Draft.findOneAndUpdate({ id, owner: username }, { isRead: false }, { new: true }).exec();
 };
+*/
 
 
-const markStarredDraft = async (id, username) => {
-  return Draft.findOneAndUpdate({ id, owner: username }, { isStarred: true }, { new: true }).exec();
-};
+/*
+const markReadDraft = async (id, username) => {
+  console.log("📥 [markReadDraft] id:", id, "username:", username);
+  try {
+    const updated = await Draft.findOneAndUpdate(
+      { id, owner: username },
+      { isRead: true },
+      { new: true }
+    ).exec();
+
+    if (!updated) {
+      console.log("❌ [markReadDraft] No draft found to update");
+    } else {
+      console.log("✅ [markReadDraft] Updated draft:", updated);
+    }
+
+    return updated;
+  } catch (error) {
+    console.error("🔥 [markReadDraft] Error:", error);
+    throw error;
+  }
+};*/
+
+async function markReadDraft(draft) {
+  try {
+    draft.isRead = true;
+    await draft.save();
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 
-const markUnstarredDraft = async (id, username) => {
-  return Draft.findOneAndUpdate({ id, owner: username }, { isStarred: false }, { new: true }).exec();
-};
+async function markUnreadDraft(draft) {
+  try {
+    draft.isRead = false;
+    await draft.save();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function markStarredDraft(draft) {
+  try {
+    draft.isStarred = true;
+    await draft.save();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function markUnstarredDraft(draft) {
+  try {
+    draft.isStarred = false;
+    await draft.save();
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 
 const editLabelsInDraft = async (id, username, newLabels) => {
@@ -100,13 +306,13 @@ const editLabelsInDraft = async (id, username, newLabels) => {
   return Draft.findOneAndUpdate({ id, owner: username }, { labels: uniqueLabels }, { new: true }).exec();
 };
 
-// מחפש טיוטות לפי שאילתה רגישה לאותיות גדולות/קטנות
+
 const filterDraftsByQueryCaseSensitive = async (query, username) => {
   const drafts = await Draft.find({ owner: username }).exec();
   return drafts.filter((draft) => searchDraftContentSensitive(query, draft));
 };
 
-// מחפש טיוטות לפי שאילתה לא רגישה לאותיות גדולות/קטנות
+
 const filterDraftsByQueryCaseInsensitive = async (query, username) => {
   const drafts = await Draft.find({ owner: username }).exec();
   return drafts.filter((draft) => searchDraftContentInsensitive(query, draft));
