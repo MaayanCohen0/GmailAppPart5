@@ -159,7 +159,7 @@ exports.getDraftById = async (req, res) => {
   }
 
   const username = userById.username;
-  console.log("Username for checking:", username);
+  //console.log("Username for checking:", username);
   const draft = await draftService.getDraftById(id, username);
 
   if (!draft) {
