@@ -1,9 +1,7 @@
 //const { findUserByUsername } = require("../services/userService");
 const { getUserById } = require("../services/userService");
 // { searchAllLabelsArray } = require("../models/labelsModel");
-const mailModel = require("../models/mailsModel");
 const mailService = require("../services/mailService");
-const draftModel = require("../models/draftsModel");
 const draftService = require("../services/draftService");
 
 // CHANGE IT TO SERVICES
