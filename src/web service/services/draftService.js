@@ -404,9 +404,15 @@ const getDraftsByUser = async (username) => {
   return drafts.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
 };
 
+const getStarredDraftsByUser = async (username) => {
+  const drafts = await Draft.find({ owner: username, isStarred: true }).exec();
+  return drafts.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
+};
+
 module.exports = {
   getAllDrafts,
   getDraftById,
+  getStarredDraftsByUser,
   createDraft,
   editDraft,
   deleteDraftById,

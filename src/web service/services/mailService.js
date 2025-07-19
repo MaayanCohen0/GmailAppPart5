@@ -117,6 +117,10 @@ async function getMailsByUser(username) {
   return await Mail.find({ owner: username }).sort({ timeStamp: -1 });
 }
 
+async function getStarredMailsByUser(username) {
+  return await Mail.find({ owner: username, isStarred: true }).sort({ timeStamp: -1 });
+}
+
 async function deleteMailById(id, username) {
   const result = await Mail.deleteOne({ id, owner: username });
   return result.deletedCount > 0;
@@ -256,6 +260,7 @@ module.exports = {
   getMailById,
   getRecentMailsOfUser,
   getMailsByUser,
+  getStarredMailsByUser,
   markReadMail,
   markUnreadMail,
   editMail,
