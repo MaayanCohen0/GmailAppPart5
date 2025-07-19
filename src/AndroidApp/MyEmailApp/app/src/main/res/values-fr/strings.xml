@@ -181,6 +181,12 @@
     <string name="toolbar_title_search_results">Résultats de recherche</string>
     <string name="no_label_found">Aucun libellé correspondant trouvé pour cet e-mail.</string>
     <string name="no_query_results">Aucun e-mail correspondant à cette requête de recherche trouvé.</string>
+    <string name="search_type_query_title">Requête : %1$s</string>
+    <string name="search_type_label_title">Libellé : %1$s</string>
+    <string name="no_emails_with_query">Aucun e-mail correspondant à la requête "%1$s".</string>
+
+
+
 
 
 

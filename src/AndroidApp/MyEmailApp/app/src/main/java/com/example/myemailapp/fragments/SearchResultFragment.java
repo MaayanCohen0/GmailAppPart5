@@ -2,6 +2,7 @@ package com.example.myemailapp.fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -342,7 +343,12 @@ public class SearchResultFragment extends Fragment implements EmailAdapter.OnEma
         viewModel.searchTerm.observe(getViewLifecycleOwner(), searchTerm -> {
             if (viewModel.searchType.getValue() != null &&
                     !"draft".equals(viewModel.searchType.getValue())) {
-                toolbar.setTitle("Label: " + searchTerm);
+                if ("query".equals(viewModel.searchType.getValue())) {
+                    toolbar.setTitle(getString(R.string.search_type_query_title, searchTerm));
+                } else {
+                    toolbar.setTitle(getString(R.string.search_type_label_title, searchTerm));
+                }
+
             }
         });
 
@@ -432,6 +438,7 @@ public class SearchResultFragment extends Fragment implements EmailAdapter.OnEma
     }
 
     private void showEmptyState() {
+        updateEmptyText();
 //        String searchType = viewModel.searchType.getValue();
 //        String searchTerm = viewModel.searchTerm.getValue();
 //
@@ -507,5 +514,19 @@ public class SearchResultFragment extends Fragment implements EmailAdapter.OnEma
 
         Log.d(TAG, "Email labels changed: " + emailId + " -> " + labels);
     }
+    @SuppressLint("StringFormatInvalid")
+    private void updateEmptyText() {
+        String searchType = viewModel.searchType.getValue();
+        String searchTerm = viewModel.searchTerm.getValue();
+
+        if ("query".equals(searchType)) {
+            emptyText.setText(getString(R.string.no_emails_with_query, searchTerm));
+        } else {
+            emptyText.setText(getString(R.string.no_emails_with_label, searchTerm));
+        }
+        emptyText.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+    }
+
 
 }

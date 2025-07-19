@@ -194,6 +194,11 @@
     <string name="no_mails_with_content">No emails found with that content.</string>
     <string name="no_label_found">No matching label found for this email.</string>
     <string name="no_query_results">No emails found matching this search query.</string>
+    <string name="search_type_query_title">Query: %1$s</string>
+    <string name="search_type_label_title">Label: %1$s</string>
+    <string name="no_emails_with_query">No emails matching query "%1$s".</string>
+
+
 
 
 </resources>

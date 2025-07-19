@@ -234,6 +234,11 @@
     <string name="toolbar_title_search_results">Suchergebnisse</string>
     <string name="no_label_found">Kein passendes Label für diese E-Mail gefunden.</string>
     <string name="no_query_results">Keine E-Mails gefunden, die dieser Suchanfrage entsprechen.</string>
+    <string name="search_type_query_title">Abfrage: %1$s</string>
+    <string name="search_type_label_title">Label: %1$s</string>
+    <string name="no_emails_with_query">Keine E-Mails, die der Suche "%1$s" entsprechen.</string>
+
+
 
 
 
