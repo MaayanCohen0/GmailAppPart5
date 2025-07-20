@@ -2,7 +2,7 @@ const trashService = require("../services/trashService");
 const { getUserById } = require("../services/userService");
 const mailService = require("../services/mailService");
 const draftService = require("../services/draftService");
-const spamModel = require("../models/spamModel");
+const spamService = require("../services/spamService");
 
 // Get all trash mails of the user
 exports.getTrashMails = async (req, res) => {
@@ -111,11 +111,11 @@ exports.restoreTrashMail = async (req, res) => {
       destination = "inbox";
       break;
     case "drafts":
-      copiedMail = draftService.createCopyOfDraft(mail, username);
+      copiedMail = await draftService.createCopyOfDraft(mail, username);
       destination = "drafts";
       break;
     case "spam":
-      copiedMail = spamModel.createCopyOfSpam(mail, username);
+      copiedMail = await spamService.createCopyOfSpam(mail, username);
       destination = "spam";
       break;
     default:
@@ -257,14 +257,14 @@ exports.addToTrashFromSpam = async (req, res) => {
   }
 
   const username = user.username;
-  const mail = spamModel.getSpamById(id, username);
+  const mail = await spamService.getSpamById(id, username);
 
   if (!mail) {
     return res.status(404).json({ error: "Spam not found for this user" });
   }
 
   try {
-    const result = spamModel.finalDeleteSpamById(id, username);
+    const result = await spamService.finalDeleteSpamById(id, username);
     if (!result) {
       return res.status(500).json({ error: "Failed to delete mail from spam" });
     }
