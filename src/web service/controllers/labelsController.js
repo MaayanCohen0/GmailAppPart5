@@ -6,7 +6,8 @@ exports.getLabels = async (req, res) => {
   const { limit } = req.query;
 
   if (!userId) return res.status(401).json({ error: "User ID is required" });
-  if (!getUserById(userId))
+  const userById = await getUserById(userId);
+  if (!userById)
     return res.status(404).json({ error: "User not found" });
 
   try {
@@ -22,7 +23,8 @@ exports.getLabelById = async (req, res) => {
   const id = req.params.id;
 
   if (!userId) return res.status(401).json({ error: "User ID is required" });
-  if (!getUserById(userId))
+  const userById = await getUserById(userId);
+  if (!userById)
     return res.status(404).json({ error: "User not found" });
 
   try {
@@ -42,7 +44,8 @@ exports.addLabel = async (req, res) => {
   const { name } = req.body;
 
   if (!userId) return res.status(401).json({ error: "User ID is required" });
-  if (!getUserById(userId))
+  const userById = await getUserById(userId);
+  if (!userById)
     return res.status(404).json({ error: "User not found" });
 
   if (!name || typeof name !== "string" || name.trim() === "")
@@ -62,14 +65,15 @@ exports.updateLabel = async (req, res) => {
   const id = req.params.id;
 
   if (!userId) return res.status(401).json({ error: "User ID is required" });
-  if (!getUserById(userId))
+  const userById = await getUserById(userId);
+  if (!userById)
     return res.status(404).json({ error: "User not found" });
-
+  const username = userById.username;
   if (!name || name.trim() === "")
     return res.status(400).json({ error: "Valid name is required" });
 
   try {
-    const updatedLabel = await labelService.updateLabel(id, name.trim(), userId);
+    const updatedLabel = await labelService.updateLabel(id, name.trim(), userId, username);
     res.status(200).json(updatedLabel);
   } catch (e) {
     res.status(400).json({ error: e.message });
@@ -81,11 +85,13 @@ exports.deleteLabel = async (req, res) => {
   const id = req.params.id;
 
   if (!userId) return res.status(401).json({ error: "User ID is required" });
-  if (!getUserById(userId))
+  const userById = await getUserById(userId);
+  if (!userById)
     return res.status(404).json({ error: "User not found" });
+  const username = userById.username;
 
   try {
-    await labelService.deleteLabel(id, userId);
+    await labelService.deleteLabel(id, userId, username);
     res.status(204).json({ deletedId: id, message: "Label deleted" });
   } catch (e) {
     res.status(400).json({ error: e.message });

@@ -68,11 +68,11 @@ async function createMail({ from, to, subject, body, labels, mailId }) {
     }
   }
 
-  // בדיקת URL שחור בכל המיילים החדשים
+
   for (const mail of newMails) {
     if (searchMailForBlacklistedURLs(mail)) {
       await spamModel.addSpamMailFromNew(mail);
-      return null; // חסימת המייל
+      return null;
     }
   }
 
@@ -115,6 +115,10 @@ async function getRecentMailsOfUser(username) {
 
 async function getMailsByUser(username) {
   return await Mail.find({ owner: username }).sort({ timeStamp: -1 });
+}
+
+async function getStarredMailsByUser(username) {
+  return await Mail.find({ owner: username, isStarred: true }).sort({ timeStamp: -1 });
 }
 
 async function deleteMailById(id, username) {
@@ -256,6 +260,7 @@ module.exports = {
   getMailById,
   getRecentMailsOfUser,
   getMailsByUser,
+  getStarredMailsByUser,
   markReadMail,
   markUnreadMail,
   editMail,

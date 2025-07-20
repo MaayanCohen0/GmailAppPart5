@@ -2,7 +2,7 @@ const multer = require("multer");
 const upload = require("../utils/uploadPic");
 //const {loadUsers} = require('../models/usersModel');
 
-// const userModel = require("../models/usersModel");
+// const userModel = require("../services/userService");
 const userService = require("../services/userService");
 const {
   isValidName,

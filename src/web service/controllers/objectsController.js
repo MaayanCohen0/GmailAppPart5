@@ -1,30 +1,32 @@
-const { findUserByUsername } = require("../models/usersModel");
-const { getUserById } = require("../models/usersModel");
+//const { findUserByUsername } = require("../services/userService");
+const { getUserById } = require("../services/userService");
 // { searchAllLabelsArray } = require("../models/labelsModel");
-const mailModel = require("../models/mailsModel");
-const draftModel = require("../models/draftsModel");
+const mailService = require("../services/mailService");
+const draftService = require("../services/draftService");
+
+// CHANGE IT TO SERVICES
 const trashModel = require("../models/trashModel");
-const spamModel = require("../models/spamModel")
+const spamModel = require("../models/spamModel");
 
 
-exports.determineObjectType = (req, res) => {
+exports.determineObjectType = async (req, res) => {
     const userId = req.userId;
     const id = req.params.id;
     if (!userId) {
         return res.status(401).json({ error: "User ID is required" });
     }
 
-    const user = getUserById(userId);
+    const user = await getUserById(userId);
     if (!user) {
         return res.status(404).json({ error: "User not found" });
     }
 
     const username = user.username;
 
-    if (mailModel.getMailById(id,username)) {
+    if (await mailService.getMailById(id,username)) {
         return res.status(200).json({message: "mails"});
     }  
-    else if (draftModel.getDraftById(id,username)) {
+    else if (await draftService.getDraftById(id,username)) {
         return res.status(200).json({message: "drafts"});
     }
     else if (spamModel.getSpamById(id, username)) {

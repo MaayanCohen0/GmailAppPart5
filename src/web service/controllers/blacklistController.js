@@ -1,12 +1,12 @@
 const blacklistService = require("../services/blacklistService");
 const { getUserById } = require("../services/userService");
 
-exports.getUrls = (req, res) => {
+exports.getUrls = async (req, res) => {
   const userId = req.userId;
   if (!userId) {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
@@ -19,12 +19,15 @@ exports.addToBlacklist = async (req, res) => {
   if (!userId) {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
+  console.log("User ID from token:", userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }
+  console.log("username from token:", userById.username);
 
   const { url } = req.body;
+  console.log("Adding URL to blacklist:", url);
   if (!url) return res.status(400).json({ error: "URL is required" });
 
   if (blacklistService.getUrls().some((item) => item.url === url)) {
@@ -32,7 +35,10 @@ exports.addToBlacklist = async (req, res) => {
   }
 
   try {
+    console.log("Calling blacklist service to add URL");
+    console.log("Request body:", req.body);
     const result = await blacklistService.addToBlacklist(url);
+    console.log("Blacklist service response:", result);
     res.status(201).location(`/api/blacklist/${result.id}`).end();
   } catch (err) {
     if (err.message.includes("400 Bad Request")) {
@@ -50,7 +56,7 @@ exports.removeFromBlacklist = async (req, res) => {
   if (!userId) {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
   }

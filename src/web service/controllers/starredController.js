@@ -1,10 +1,8 @@
 
-const { getUserById } = require("../models/usersModel");
+const { getUserById } = require("../services/userService");
 // { searchAllLabelsArray } = require("../models/labelsModel");
-const mailModel = require("../models/mailsModel");
-const draftModel = require("../models/draftsModel");
-const labelsModel = require("../models/labelsModel");
-const starredModel = require("../models/starredModel");
+//const starredModel = require("../models/starredModel");
+const starredService = require("../services/starredService");
 
 
 exports.getStarredObjects = async (req, res) => {
@@ -15,7 +13,7 @@ exports.getStarredObjects = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
 
   // TO CHECK THIS
   if (!userById) {
@@ -27,7 +25,7 @@ exports.getStarredObjects = async (req, res) => {
 
   try {
     // return 50 recent mails of this username
-    return res.status(200).json(starredModel.getStarredByUser(username));
+    return res.status(200).json(await starredService.getStarredByUser(username));
   } catch (e) {
     // error in the server
     return res

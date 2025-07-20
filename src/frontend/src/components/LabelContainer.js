@@ -1,4 +1,3 @@
-// export default LabelContainer;
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -50,7 +49,6 @@ const LabelContainer = ({ onLabelClick }) => {
     })();
   }, [token]);
 
-  // Add new label via POST, returns { id, name }
   const getAllLabels = async () => {
     try {
       setLoading(true);
@@ -67,7 +65,6 @@ const LabelContainer = ({ onLabelClick }) => {
     }
   };
 
-  // Add new label via POST, returns { id, name }
   const handleAddLabel = async () => {
     if (!newLabelName.trim()) return;
 
@@ -83,7 +80,6 @@ const LabelContainer = ({ onLabelClick }) => {
 
       if (res.status === 409) {
         setError("Label already exists.");
-        // Don't clear the input, just show error
         return;
       }
 
@@ -91,18 +87,16 @@ const LabelContainer = ({ onLabelClick }) => {
 
       const newLabel = await res.json();
 
-      // Update allLabels array
       const updatedAllLabels = [newLabel, ...allLabels];
       setAllLabels(updatedAllLabels);
 
-      // Update displayed labels based on current view
       if (showAll) {
         setLabels(updatedAllLabels);
       } else {
         setLabels(updatedAllLabels.slice(0, 5));
       }
 
-      setNewLabelName(""); // Clear input
+      setNewLabelName("");
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -110,7 +104,6 @@ const LabelContainer = ({ onLabelClick }) => {
     }
   };
 
-  // Edit label via PATCH, returns updated { id, name }
   const handleEditLabel = async (label) => {
     if (!editLabelName.trim() || editLabelName.trim() === label.name) {
       setEditingLabelId(null);
@@ -118,7 +111,7 @@ const LabelContainer = ({ onLabelClick }) => {
     }
 
     try {
-      const res = await fetch(`${BASE_URL_LABEL}/${label.id}`, {
+      const res = await fetch(`${BASE_URL_LABEL}/${label._id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -129,7 +122,6 @@ const LabelContainer = ({ onLabelClick }) => {
 
       if (res.status === 409) {
         setError("Label name already exists.");
-        // Don't exit edit mode, just show error
         return;
       }
 
@@ -137,12 +129,11 @@ const LabelContainer = ({ onLabelClick }) => {
 
       const updated = await res.json();
 
-      // Update both allLabels and displayed labels
       const updatedAllLabels = allLabels.map((l) =>
-        l.id === updated.id ? updated : l
+        l._id === updated._id ? updated : l
       );
       setAllLabels(updatedAllLabels);
-      setLabels((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
+      setLabels((prev) => prev.map((l) => (l._id === updated._id ? updated : l)));
 
       setEditingLabelId(null);
       setError(null);
@@ -156,25 +147,22 @@ const LabelContainer = ({ onLabelClick }) => {
     }
   };
 
-  // Delete label via DELETE
   const handleDeleteLabel = async (label, e) => {
     e.stopPropagation();
     try {
       if (!window.confirm(`Delete label "${label.name}"?`)) return;
 
-      const res = await fetch(`${BASE_URL_LABEL}/${label.id}`, {
+      const res = await fetch(`${BASE_URL_LABEL}/${label._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) throw new Error(`Error ${res.status}`);
 
-      // Update both allLabels and displayed labels
-      const updatedAllLabels = allLabels.filter((l) => l.id !== label.id);
+      const updatedAllLabels = allLabels.filter((l) => l._id !== label._id);
       setAllLabels(updatedAllLabels);
-      setLabels((prev) => prev.filter((l) => l.id !== label.id));
+      setLabels((prev) => prev.filter((l) => l._id !== label._id));
 
-      // If we're currently viewing this label, navigate back to inbox
       if (labelName === label.name) {
         navigate("/home");
       }
@@ -185,32 +173,29 @@ const LabelContainer = ({ onLabelClick }) => {
   };
 
   const handleLabelClick = (label) => {
-    // Clear search state and navigate to label search
     if (onLabelClick) {
-      onLabelClick(); // This will clear search query, results, and displayedQuery
+      onLabelClick();
     }
     navigate(`/search/label/${encodeURIComponent(label.name)}`);
   };
 
   const handleShowAllLabels = () => {
     if (showAll) {
-      setLabels(allLabels.slice(0, 5)); // collapse to 5
+      setLabels(allLabels.slice(0, 5));
       setShowAll(false);
     } else {
-      setLabels(allLabels); // expand to show all
+      setLabels(allLabels);
       setShowAll(true);
     }
   };
 
-  // Handle "Back to Inbox" click
   const handleBackToInbox = () => {
     if (onLabelClick) {
-      onLabelClick(); // Clear search state
+      onLabelClick();
     }
     navigate("/home");
   };
 
-  // Cancel editing
   const handleCancelEdit = (e) => {
     e.stopPropagation();
     setEditingLabelId(null);
@@ -218,10 +203,9 @@ const LabelContainer = ({ onLabelClick }) => {
     setError(null);
   };
 
-  // Cancel adding new label
   const handleCancelAdd = () => {
     setNewLabelName("");
-    setError(null); // Clear any error when canceling
+    setError(null);
   };
 
   if (loading) return <div>Loading labels...</div>;
@@ -254,7 +238,6 @@ const LabelContainer = ({ onLabelClick }) => {
         </div>
       </div>
 
-      {/* Add new label input - outside of header */}
       {newLabelName && (
         <div className="add-label-container">
           <input
@@ -270,7 +253,6 @@ const LabelContainer = ({ onLabelClick }) => {
         </div>
       )}
 
-      {/* Error display */}
       {error && <div className="error">{error}</div>}
 
       {labelName && (
@@ -285,11 +267,11 @@ const LabelContainer = ({ onLabelClick }) => {
       <ul className={`label-list ${showAll ? "scrollable" : ""}`}>
         {labels.map((label) => (
           <li
-            key={label.id}
+            key={label._id}
             className={`label-item ${labelName === label.name ? "active" : ""}`}
             onClick={() => handleLabelClick(label)}
           >
-            {editingLabelId === label.id ? (
+            {editingLabelId === label._id ? (
               <>
                 <input
                   className="label-input"
@@ -326,7 +308,7 @@ const LabelContainer = ({ onLabelClick }) => {
                     className="action-btn edit-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setEditingLabelId(label.id);
+                      setEditingLabelId(label._id);
                       setEditLabelName(label.name);
                     }}
                     title="Edit label"

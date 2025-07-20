@@ -8,7 +8,7 @@ const authMiddleware = require("../utils/authUtil");
 router.route("/")
   .get(authMiddleware, draftsController.getAllDraftsOfUser)
   .post(authMiddleware, draftsController.writeNewDraft);
-// GET /api/mails/:id - we want to get a mail by id
+
 
 router.route('/:id')
     .get(authMiddleware, draftsController.getDraftById)
