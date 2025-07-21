@@ -24,7 +24,7 @@ import com.example.myemailapp.adapters.EmailAdapter;
 import com.example.myemailapp.model.Email;
 import com.example.myemailapp.utils.EmailActionHandler;
 import com.example.myemailapp.utils.EmailListManager;
-import com.example.myemailapp.viewmodel.StarredViewModel;
+import com.example.myemailapp.viewmodel.DraftsViewModel;
 import com.example.myemailapp.viewmodel.LabelViewModel;
 
 
@@ -33,8 +33,8 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class StarredFragment extends Fragment implements EmailAdapter.OnEmailListUpdateListener {
-    private static final String TAG = "StarredFragment";
+public class DraftsFragment extends Fragment implements EmailAdapter.OnEmailListUpdateListener {
+    private static final String TAG = "DraftsFragment";
     private static final long REFRESH_INTERVAL = 2000; // 2 seconds
 
     private RecyclerView recyclerView;
@@ -44,9 +44,9 @@ public class StarredFragment extends Fragment implements EmailAdapter.OnEmailLis
     private Handler handler;
     private Runnable refreshRunnable;
 
-    private StarredViewModel starredViewModel;
+    private DraftsViewModel draftsViewModel;
     private LabelViewModel labelViewModel;
-    private List<Email> starredEmails = new ArrayList<>();
+    private List<Email> drafts = new ArrayList<>();
     private List<String> availableLabels = new ArrayList<>();
     private EmailActionHandler actionHandler;
     private String authToken;
@@ -63,7 +63,7 @@ public class StarredFragment extends Fragment implements EmailAdapter.OnEmailLis
         actionHandler = new EmailActionHandler(requireContext(), authToken);
 
         // Initialize ViewModels
-        starredViewModel = new ViewModelProvider(this).get(StarredViewModel.class);
+        draftsViewModel = new ViewModelProvider(this).get(DraftsViewModel.class);
         labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
 
     }
@@ -71,29 +71,29 @@ public class StarredFragment extends Fragment implements EmailAdapter.OnEmailLis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_starred, container, false);
+        View view = inflater.inflate(R.layout.fragment_drafts, container, false);
 
         initializeViews(view);
         setupRecyclerView();
         setupObservers();
 
         // Load initial data
-        starredViewModel.loadStarredEmails();
+        draftsViewModel.loadDrafts();
         labelViewModel.loadLabels();
 
         return view;
     }
 
     private void initializeViews(View view) {
-        recyclerView = view.findViewById(R.id.recycler_view_starred);
-        emptyText = view.findViewById(R.id.empty_starred_text);
+        recyclerView = view.findViewById(R.id.recycler_view_drafts);
+        emptyText = view.findViewById(R.id.empty_drafts_text);
 //        titleText = view.findViewById(R.id.sent_title);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     private void setupRecyclerView() {
-        emailAdapter = new EmailAdapter(starredEmails, new EmailAdapter.OnEmailClickListener() {
+        emailAdapter = new EmailAdapter(drafts, new EmailAdapter.OnEmailClickListener() {
             @Override
             public void onEmailClick(Email email) {
                 onMarkReadClick(email);
@@ -203,21 +203,21 @@ public class StarredFragment extends Fragment implements EmailAdapter.OnEmailLis
 
     private void setupObservers() {
         // Observe sent emails
-        starredViewModel.getStarredEmails().observe(getViewLifecycleOwner(), emails -> {
+        draftsViewModel.getDrafts().observe(getViewLifecycleOwner(), emails -> {
             if (emails != null) {
-                starredEmails.clear();
-                starredEmails.addAll(emails);
+                drafts.clear();
+                drafts.addAll(emails);
                 emailAdapter.notifyDataSetChanged();
 
                 // Update empty state
-                starredViewModel.updateEmptyState(emails);
+                draftsViewModel.updateEmptyState(emails);
 
-                Log.d(TAG, "Updated starred emails: " + emails.size() + " items");
+                Log.d(TAG, "Updated drafts: " + emails.size() + " items");
             }
         });
 
         // Observe empty state
-        starredViewModel.getShouldShowEmpty().observe(getViewLifecycleOwner(), shouldShowEmpty -> {
+        draftsViewModel.getShouldShowEmpty().observe(getViewLifecycleOwner(), shouldShowEmpty -> {
             if (shouldShowEmpty) {
                 emptyText.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
@@ -230,16 +230,16 @@ public class StarredFragment extends Fragment implements EmailAdapter.OnEmailLis
         });
 
         // Observe error messages
-        starredViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+        draftsViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Starred Error: " + error);
+                Log.e(TAG, "Drafts Error: " + error);
             }
         });
 
         // Observe loading state
-        starredViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            Log.d(TAG, "Starred Loading state: " + isLoading);
+        draftsViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            Log.d(TAG, "Drafts Loading state: " + isLoading);
         });
 
         // Observe labels from LabelViewModel
@@ -313,33 +313,33 @@ public class StarredFragment extends Fragment implements EmailAdapter.OnEmailLis
 
     @Override
     public void onEmailRemoved(String emailId) {
-        starredEmails = EmailListManager.removeEmailFromList(starredEmails, emailId);
-        emailAdapter.updateEmailList(starredEmails);
-        starredViewModel.updateEmptyState(starredEmails);
+        drafts = EmailListManager.removeEmailFromList(drafts, emailId);
+        emailAdapter.updateEmailList(drafts);
+        draftsViewModel.updateEmptyState(drafts);
     }
 
     @Override
     public void onEmailReadStatusChanged(String emailId, boolean isRead) {
-        starredEmails = EmailListManager.updateEmailReadStatus(starredEmails, emailId, isRead);
-        emailAdapter.updateEmailList(starredEmails);
+        drafts = EmailListManager.updateEmailReadStatus(drafts, emailId, isRead);
+        emailAdapter.updateEmailList(drafts);
     }
 
     @Override
     public void onEmailStarStatusChanged(String emailId, boolean isStarred) {
-        starredEmails = EmailListManager.updateEmailStarStatus(starredEmails, emailId, isStarred);
-        emailAdapter.updateEmailList(starredEmails);
+        drafts = EmailListManager.updateEmailStarStatus(drafts, emailId, isStarred);
+        emailAdapter.updateEmailList(drafts);
     }
 
     @Override
     public void onEmailLabelsChanged(String emailId, List<String> labels) {
-        starredEmails = EmailListManager.updateEmailLabels(starredEmails, emailId, labels);
-        emailAdapter.updateEmailList(starredEmails);
+        drafts = EmailListManager.updateEmailLabels(drafts, emailId, labels);
+        emailAdapter.updateEmailList(drafts);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        starredViewModel.loadStarredEmails();
+        draftsViewModel.loadDrafts();
         labelViewModel.loadLabels();
         startPeriodicRefresh();
         labelViewModel.startPeriodicRefresh();
@@ -357,7 +357,7 @@ public class StarredFragment extends Fragment implements EmailAdapter.OnEmailLis
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
-                starredViewModel.loadStarredEmails();
+                draftsViewModel.loadDrafts();
                 handler.postDelayed(this, REFRESH_INTERVAL);
             }
         };

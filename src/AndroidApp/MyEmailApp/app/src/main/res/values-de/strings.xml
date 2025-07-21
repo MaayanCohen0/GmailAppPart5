@@ -97,6 +97,7 @@
     <string name="nav_inbox">Posteingang</string>
     <string name="nav_starred">Markiert</string>
     <string name="nav_sent">Gesendet</string>
+    <string name="nav_drafts">Entwürfe</string>
     <string name="nav_spam">Spam</string>
     <string name="nav_trash">Papierkorb</string>
     <string name="nav_logout">Abmelden</string>
@@ -127,6 +128,10 @@
     <string name="empty_inbox_text">Noch keine Nachrichten im Posteingang</string>
     <string name="sent_title">Gesendet</string>
     <string name="empty_sent_text">Noch keine gesendeten Nachrichten</string>
+    <string name="drafts_title">Entwürfe</string>
+    <string name="empty_drafts_text">Noch keine Entwürfe</string>
+    <string name="starred_title">Markiert</string>
+    <string name="empty_starred_text">Noch keine markiert Nachrichten</string>
     <string name="labels_section">Etiketten</string>
     <string name="nav_view_labels">Etiketten</string>
     <string name="nav_profile">Profil</string>

@@ -93,6 +93,7 @@
     <string name="nav_inbox">Boîte de réception</string>
     <string name="nav_starred">Favoris</string>
     <string name="nav_sent">Envoyés</string>
+    <string name="nav_drafts">Brouillons</string>
     <string name="nav_spam">Spam</string>
     <string name="nav_trash">Corbeille</string>
     <string name="nav_logout">Déconnexion</string>
@@ -120,6 +121,10 @@
     <string name="empty_inbox_text">Pas encore de mails dans la boîte de réception</string>
     <string name="sent_title">Envoyés</string>
     <string name="empty_sent_text">Pas encore de mails envoyés</string>
+    <string name="drafts_title">Brouillons</string>
+    <string name="empty_drafts_text">Pas encore de brouillons</string>
+    <string name="starred_title">Favoris</string>
+    <string name="empty_starred_text">Pas encore de mails favoris</string>
     <string name="labels_section">Étiquettes</string>
     <string name="nav_view_labels">Étiquettes</string>
     <string name="nav_profile">Profil</string>

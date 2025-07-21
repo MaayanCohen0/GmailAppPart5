@@ -31,9 +31,12 @@ import com.example.myemailapp.fragments.InboxFragment;
 import com.example.myemailapp.fragments.SentFragment;
 import com.example.myemailapp.fragments.SpamFragment;
 import com.example.myemailapp.fragments.StarredFragment;
+import com.example.myemailapp.fragments.DraftsFragment;
 import com.example.myemailapp.fragments.TrashFragment;
 import com.example.myemailapp.fragments.ProfileFragment;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.myemailapp.fragments.ComposeMailFragment;
 
 import org.json.JSONObject;
 
@@ -117,6 +120,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             // Update navigation header with username
             updateNavigationHeader();
+
+            FloatingActionButton fabCompose = findViewById(R.id.fab_compose);
+            fabCompose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ComposeMailFragment composeFragment = new ComposeMailFragment();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, composeFragment)
+                            .addToBackStack("compose_email")
+                            .commit();
+                }
+            });
 
         } catch (Exception e) {
             Log.e(TAG, "Error in MainActivity onCreate", e);
@@ -329,6 +345,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment = new SentFragment();
             title = getString(R.string.nav_sent);
             fragmentTag = "sent";
+        }
+        else if (id == R.id.nav_drafts) {
+            fragment = new DraftsFragment();
+            title = getString(R.string.nav_drafts);
+            fragmentTag = "drafts";
         }
         else if (id == R.id.nav_spam) {
             fragment = new SpamFragment();

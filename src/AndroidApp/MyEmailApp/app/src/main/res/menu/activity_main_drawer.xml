@@ -21,6 +21,10 @@
             android:icon="@drawable/sent"
             android:title="@string/nav_sent" />
         <item
+            android:id="@+id/nav_drafts"
+            android:icon="@drawable/drafts"
+            android:title="@string/nav_drafts" />
+        <item
             android:id="@+id/nav_spam"
             android:icon="@drawable/spam"
             android:title="@string/nav_spam" />

@@ -98,6 +98,7 @@
     <string name="nav_inbox">Inbox</string>
     <string name="nav_starred">Starred</string>
     <string name="nav_sent">Sent</string>
+    <string name="nav_drafts">Drafts</string>
     <string name="nav_spam">Spam</string>
     <string name="nav_trash">Trash</string>
     <string name="nav_logout">Logout</string>
@@ -131,6 +132,10 @@
     <string name="empty_inbox_text">no mails in inbox yet</string>
     <string name="sent_title">Sent</string>
     <string name="empty_sent_text">No sent mails yet</string>
+    <string name="drafts_title">Drafts</string>
+    <string name="empty_drafts_text">No drafts yet</string>
+    <string name="starred_title">Starred</string>
+    <string name="empty_starred_text">No starred mails yet</string>
     <string name="labels_section">Labels</string>
     <string name="nav_view_labels">Labels</string>
     <string name="nav_profile">Profile</string>
