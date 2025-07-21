@@ -1,12 +1,12 @@
 // searchAllController.js
-const searchAllsModel = require("../models/searchAllModel");
-const queryMailsModel = require("../models/mailsModel");
-const { getUserById } = require("../models/usersModel");
-const { saveSearchQuery } = require("../models/searchHistoryModel");
-const { getLastSearchQueries } = require("../models/searchHistoryModel");
-const { deleteSearchQueriesByUserId } = require("../models/searchHistoryModel");
-const { deleteOneSearchQuery } = require("../models/searchHistoryModel");
-const {filterAllMailsByQuery} = require("../models/searchAllModel");
+const searchAllsModel = require("../services/searchAllService");
+// const queryMailsModel = require("../models/mailsModel");
+const { getUserById } = require("../services/userService");
+const { saveSearchQuery } = require('../services/searchHistoryService');
+const { getLastSearchQueries } = require("../services/searchHistoryService");
+const { deleteSearchQueriesByUserId } = require("../services/searchHistoryService");
+const { deleteOneSearchQuery } = require("../services/searchHistoryService");
+const {filterAllMailsByQuery} = require("../services/searchHistoryService");
 
 // Search by free-text query
 exports.searchQuery = async (req, res) => {
@@ -15,7 +15,6 @@ exports.searchQuery = async (req, res) => {
   const saveSearch = req.headers["save-search"] === "true";
   const { query } = req.params;
 
-  // console.log(`🔍 Query: "${query}"`);
   // console.log(`💾 saveSearch boolean: ${saveSearch}`);
   // console.log(`📋 All headers:`, req.headers);
 
@@ -26,7 +25,7 @@ exports.searchQuery = async (req, res) => {
     return res.status(401).json({ error: "Valid user-id is required" });
   }
 
-  const userById = getUserById(userId);
+  const userById = await getUserById(userId);
 
   if (!userById) {
     return res.status(404).json({ error: "User with this user-id not found" });
@@ -39,7 +38,7 @@ exports.searchQuery = async (req, res) => {
     );
     // Save the search query to the history
   if (saveSearch) {
-      saveSearchQuery(userId, query);
+      await saveSearchQuery(userId, query);
     }
     return res.status(200).json({
       message: "Mails retrieved successfully",

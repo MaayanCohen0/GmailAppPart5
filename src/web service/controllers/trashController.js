@@ -1,8 +1,8 @@
 const trashService = require("../services/trashService");
 const { getUserById } = require("../services/userService");
 const mailService = require("../services/mailService");
-const draftModel = require("../models/draftsModel");
-const spamModel = require("../models/spamModel");
+const draftService = require("../services/draftService");
+const spamService = require("../services/spamService");
 
 // Get all trash mails of the user
 exports.getTrashMails = async (req, res) => {
@@ -111,11 +111,11 @@ exports.restoreTrashMail = async (req, res) => {
       destination = "inbox";
       break;
     case "drafts":
-      copiedMail = draftModel.createCopyOfDraft(mail, username);
+      copiedMail = await draftService.createCopyOfDraft(mail, username);
       destination = "drafts";
       break;
     case "spam":
-      copiedMail = spamModel.createCopyOfSpam(mail, username);
+      copiedMail = await spamService.createCopyOfSpam(mail, username);
       destination = "spam";
       break;
     default:
@@ -202,20 +202,26 @@ exports.addToTrashFromDraft = async (req, res) => {
   }
 
   const username = user.username;
-  const mail = draftModel.getDraftById(id, username);
+  const mail = await draftService.getDraftById(id, username);
+  // console.log("draft:", mail);
+
 
   if (!mail) {
     return res.status(404).json({ error: "Draft not found for this user" });
   }
+  mail.mailType = "sent"; // Ensure mailType is set to "sent" for drafts
 
   try {
-    const result = draftModel.deleteDraftById(id, username);
+    // console.log("try delete draft");
+    const result = await draftService.deleteDraftById(id, username);
     if (!result) {
+      console.log("result is false");
       return res
         .status(500)
         .json({ error: "Failed to delete mail from drafts" });
     }
   } catch (error) {
+    // console.log("error in delete draft", error);
     return res.status(500).json({
       error: "Failed to delete mail from drafts",
       detail: error.message || String(error),
@@ -228,6 +234,7 @@ exports.addToTrashFromDraft = async (req, res) => {
       .status(201)
       .json({ message: "Mail marked as trash", mail: mail });
   } catch (error) {
+    // console.log("error in add to trash", error);
     return res.status(500).json({
       error: "Failed to add mail to trash",
       detail: error.message || String(error),
@@ -250,14 +257,14 @@ exports.addToTrashFromSpam = async (req, res) => {
   }
 
   const username = user.username;
-  const mail = spamModel.getSpamById(id, username);
+  const mail = await spamService.getSpamById(id, username);
 
   if (!mail) {
     return res.status(404).json({ error: "Spam not found for this user" });
   }
 
   try {
-    const result = spamModel.finalDeleteSpamById(id, username);
+    const result = await spamService.finalDeleteSpamById(id, username);
     if (!result) {
       return res.status(500).json({ error: "Failed to delete mail from spam" });
     }

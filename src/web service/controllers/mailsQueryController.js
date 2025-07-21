@@ -1,10 +1,10 @@
 
 const { getUserById } = require("../services/userService");
-const { saveSearchQuery } = require("../models/searchHistoryModel");
-const { getLastSearchQueries } = require("../models/searchHistoryModel");
-const { deleteSearchQueriesByUserId } = require("../models/searchHistoryModel");
-const { deleteOneSearchQuery } = require("../models/searchHistoryModel");
-const searchAllsModel = require("../models/searchAllModel");
+const { saveSearchQuery } = require("../services/searchHistoryService");
+const { getLastSearchQueries } = require("../services/searchHistoryService");
+const { deleteSearchQueriesByUserId } = require("../services/searchHistoryService");
+const { deleteOneSearchQuery } = require("../services/searchHistoryService");
+const searchAllsModel = require("../services/searchAllService");
 
 exports.searchMails = async (req, res) => {
   //const userId = req.userId;

@@ -5,8 +5,8 @@ const mailService = require("../services/mailService");
 const draftService = require("../services/draftService");
 
 // CHANGE IT TO SERVICES
-const trashModel = require("../models/trashModel");
-const spamModel = require("../models/spamModel");
+const trashService = require("../services/trashService");
+const spamService = require("../services/spamService");
 
 
 exports.determineObjectType = async (req, res) => {
@@ -29,10 +29,10 @@ exports.determineObjectType = async (req, res) => {
     else if (await draftService.getDraftById(id,username)) {
         return res.status(200).json({message: "drafts"});
     }
-    else if (spamModel.getSpamById(id, username)) {
+    else if (await spamService.getSpamById(id, username)) {
         return res.status(200).json({message: "spam"});
     }
-    else if (trashModel.getTrashById(id, username)) {
+    else if (await trashService.getTrashById(id, username)) {
         return res.status(200).json({message: "trash"});
     }
     else {

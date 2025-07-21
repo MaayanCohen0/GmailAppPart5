@@ -17,7 +17,6 @@ async function getAllMails(username) {
     ...drafts.map((m) => ({ ...m.toObject(), source: "drafts" })),
   ];
   combined.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
-   console.log("Combined mails:", combined);
   return combined;
 }
 
@@ -31,9 +30,7 @@ exports.filterMailsByLabel = async (labelName, username) => {
 };
 
 const searchMailContentInsensitive =  (query, newMail) => {
-  console.log("Searching mail content with query:", query);
   if (!newMail) return false;
-  console.log("start");
   const q = query.toLowerCase();
 
   const hasQueryInFields =
@@ -54,20 +51,10 @@ const searchMailContentInsensitive =  (query, newMail) => {
       (label) => label.name && label.name.toLowerCase().includes(q)
     );
 
-    const result = hasQueryInFields || hasQueryInToRecipients || hasQueryInLabels;
-
-  console.log("בדיקת מייל:", {
-    subject: newMail.subject,
-    from: newMail.from,
-    to: newMail.to,
-    labels: labelsObject,
-    match: result,
-  });
   return hasQueryInFields || hasQueryInToRecipients || hasQueryInLabels;
 };
 
 exports.filterAllMailsByQuery = async (query, username) => {
-   console.log("in");
   const allMails = await getAllMails(username);
 
   return allMails.filter((mail) => {

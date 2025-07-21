@@ -10,7 +10,7 @@ const trashSchema = new mongoose.Schema({
   body:     { type: String, default: "" },
   labels:   { type: [String], default: [] },
   timeStamp:{ type: Date, default: Date.now },
-  mailType: { type: String, enum: ["sent","received","sent and received"], required: true },
+  mailType: { type: String, enum: ["sent", "received", "sent and received"], default: "sent" },
   isRead:   { type: Boolean, default: false },
   isStarred:{ type: Boolean, default: false },
   trashedAt: { type: Date, default: Date.now },
