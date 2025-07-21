@@ -1,5 +1,6 @@
 package com.example.myemailapp.fragments;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -97,26 +98,25 @@ public class DraftsFragment extends Fragment implements EmailAdapter.OnEmailList
             @Override
             public void onEmailClick(Email email) {
                 onMarkReadClick(email);
+
+                // כאן מחליפים Fragment ולא משתמשים ב-Intent
+                ComposeMailFragment composeFragment = new ComposeMailFragment();
+
                 Bundle args = new Bundle();
-                args.putString("from",      email.getFrom());
-                args.putString("subject",   email.getSubject());
-                args.putString("timestamp", email.getTimeStamp());
-                args.putString("body",      email.getBody());
-                // Labels: convert list → comma‐separated string (or empty)
-                args.putString("labels",
-                        email.getLabels() != null
-                                ? TextUtils.join(", ", email.getLabels())
-                                : "");
+                args.putString("draftId", email.getId());
+                args.putString("to", TextUtils.join(",", email.getTo()));
+                args.putString("subject", email.getSubject());
+                args.putString("body", email.getBody());
+                composeFragment.setArguments(args);
 
-                EmailDetailFragment detailFragment = new EmailDetailFragment();
-                detailFragment.setArguments(args);
-
-                requireActivity().getSupportFragmentManager()
+                requireActivity()
+                        .getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragment_container, detailFragment)
+                        .replace(R.id.fragment_container, composeFragment) // החלף ל-id של ה-FragmentContainerView שלך
                         .addToBackStack(null)
                         .commit();
             }
+
 
             @Override
             public void onRestoreClick(Email email) {

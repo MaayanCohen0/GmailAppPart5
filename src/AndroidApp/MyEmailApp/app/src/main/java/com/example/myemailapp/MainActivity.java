@@ -37,6 +37,7 @@ import com.example.myemailapp.fragments.ProfileFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.myemailapp.fragments.ComposeMailFragment;
+import com.google.android.material.search.SearchBar;
 
 import org.json.JSONObject;
 
@@ -125,12 +126,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fabCompose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Toolbar toolbar = findViewById(R.id.toolbar);
+                    if (toolbar != null) toolbar.setVisibility(View.GONE);
+
+                    FloatingActionButton fabCompose = findViewById(R.id.fab_compose);
+                    if (fabCompose != null) fabCompose.setVisibility(View.GONE);
+
+
+                    DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+                    if (drawerLayout != null) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
                     ComposeMailFragment composeFragment = new ComposeMailFragment();
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.fragment_container, composeFragment)
                             .addToBackStack("compose_email")
                             .commit();
+                }
+            });
+
+            /*fabCompose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ComposeMailFragment composeFragment = new ComposeMailFragment();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, composeFragment)
+                            .addToBackStack("compose_email")
+                            .commit();
+                }
+            });*/
+
+            getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                Toolbar toolbar = findViewById(R.id.toolbar);
+                //  FloatingActionButton fabCompose = findViewById(R.id.fab_compose);
+                DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+
+                if (currentFragment instanceof ComposeMailFragment) {
+                    if (toolbar != null) toolbar.setVisibility(View.GONE);
+                    if (fabCompose != null) fabCompose.setVisibility(View.GONE);
+                    if (drawerLayout != null) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                } else {
+                    // אנחנו מחוץ ל־ComposeMailFragment - הראה את ה־UI
+                    if (toolbar != null) toolbar.setVisibility(View.VISIBLE);
+                    if (fabCompose != null) fabCompose.setVisibility(View.VISIBLE);
+                    if (drawerLayout != null) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 }
             });
 
