@@ -67,35 +67,7 @@ The authentication system works consistently across all platforms:
 
 # 🚀 Running the Application
 
-## Prerequisites
-
-- Docker and Docker Compose (for backend services)
-- Node.js and npm (for web development)
-- Android Studio and SDK (for Android development)
-
-## Backend Services Setup
-
-To run the backend and frontend services, navigate to the root directory and use Docker Compose:
-
-### 1. Clean up previous containers (if needed):
-
-```bash
-docker-compose down
-```
-
-### 2. Start all services:
-
-```bash
-docker-compose up --build
-```
-
-## Web Application Setup
-
-### Open your browser:
-
-```bash
-http://localhost:3000
-```
+📘 Project setup and execution are fully detailed in the Wiki.
 
 ## Android Application Setup
 
