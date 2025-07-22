@@ -78,6 +78,15 @@ private void loadUserData() {
     String lastName = prefs.getString("lastName", "");
     String phone = prefs.getString("phoneNumber", "");
     String birthDate = prefs.getString("birthDate", "");
+    if (!birthDate.isEmpty()) {
+        // Extract just the date part (2000-01-01)
+        String formattedDate = birthDate.substring(0, 10);
+        // Or convert to a more readable format
+        String[] parts = formattedDate.split("-");
+        String readableDate = parts[2] + "/" + parts[1] + "/" + parts[0]; // DD/MM/YYYY
+        birthDate = readableDate;
+    }
+
     String gender = prefs.getString("gender", "");
 
     if (!profilePic.isEmpty()) {
