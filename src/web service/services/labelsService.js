@@ -1,8 +1,8 @@
 const Label = require("../models/labelsModel");
 const Mail = require("../models/mailsModel");
 const Draft = require("../models/draftsModel");
-//const Spam = require("../models/spamModel");
-//const Trash = require("../models/trashModel");
+const Spam = require("../models/spamModel");
+const Trash = require("../models/trashModel");
 
 const getLabels = async (userId, limit = null) => {
   const query = Label.find({ userId });
@@ -48,7 +48,7 @@ async function updateLabelInAllElements(oldName, newName, username) {
       updateQuery,
       options
     );
-/*
+
     const spamUpdate = await Spam.updateMany(
       { owner: username, labels: oldName },
       updateQuery,
@@ -60,9 +60,9 @@ async function updateLabelInAllElements(oldName, newName, username) {
       updateQuery,
       options
     );
-*/
-    //return { mailsUpdate, draftsUpdate, spamUpdate, trashUpdate };
-    return { mailsUpdate, draftsUpdate };
+
+    return { mailsUpdate, draftsUpdate, spamUpdate, trashUpdate };
+    //return { mailsUpdate, draftsUpdate };
   } catch (err) {
     console.error("Error updating label in all elements:", err);
     return {};
@@ -80,7 +80,7 @@ async function deleteLabelInAllElements(nameToRemove, username) {
       { owner: username, labels: nameToRemove },
       { $pull: { labels: nameToRemove } }
     );
-/*
+
     const spamUpdate = await Spam.updateMany(
       { owner: username, labels: nameToRemove },
       { $pull: { labels: nameToRemove } }
@@ -90,9 +90,9 @@ async function deleteLabelInAllElements(nameToRemove, username) {
       { owner: username, labels: nameToRemove },
       { $pull: { labels: nameToRemove } }
     );
-*/
-    //return { mailsUpdate, draftsUpdate, spamUpdate, trashUpdate };
-    return { mailsUpdate, draftsUpdate };
+
+    return { mailsUpdate, draftsUpdate, spamUpdate, trashUpdate };
+    //return { mailsUpdate, draftsUpdate };
   } catch (err) {
     console.error("Error deleting label in all elements:", err);
     return {};
