@@ -61,7 +61,7 @@ async function addSpamMailFromNew(mail) {
       source: "inbox",
     };
     const mailsService = require("../services/mailService");
-    mailsService.createCopyOfMail(sentMail);
+    await mailsService.createCopyOfMailForSpam(sentMail);
 
     for (const recipient of recipients) {
       if (recipient !== mail.from) {
