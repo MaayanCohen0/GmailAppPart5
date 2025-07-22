@@ -13,7 +13,7 @@ RUN npm init -y
 # Install dependencies required by app.js
 RUN npm install express body-parser uuid
 
-RUN npm install dotenv cors jsonwebtoken multer node-cron parser
+RUN npm install dotenv cors jsonwebtoken multer node-cron parser mongoose
 
 # Copy the entire src directory (including app.js and other files/folders like routes and models)
 COPY src/ ./src/

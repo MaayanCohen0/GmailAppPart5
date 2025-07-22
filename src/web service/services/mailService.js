@@ -14,6 +14,7 @@ async function createMail({ from, to, subject, body, labels, mailId }) {
   if (!mailId) mailId = uuidv4();
 
   const newMails = [];
+ // const selfMail = [];
 
   if (isSelfSend) {
     newMails.push(
@@ -69,13 +70,53 @@ async function createMail({ from, to, subject, body, labels, mailId }) {
     }
   }
 
+  //let isBlacklisted = false;
 
   for (const mail of newMails) {
     if (searchMailForBlacklistedURLs(mail)) {
       await spamService.addSpamMailFromNew(mail);
+     // isBlacklisted = true;
       return null;
     }
   }
+  /*
+  if (isBlacklisted) {
+    if (isSelfSend) {
+      selfMail.push(
+        new Mail({
+        id: mailId,
+        from,
+        to: uniqueTo,
+        subject,
+        body,
+        labels,
+        timeStamp,
+        mailType: "sent and received",
+        owner: from,
+        isRead: false,
+        isStarred: false,
+      }));
+    } else {
+      selfMail.push(
+        new Mail({
+          id: mailId,
+          from,
+          to: uniqueTo,
+          subject,
+          body,
+          labels,
+          timeStamp,
+          mailType: "sent",
+          owner: from,
+          isRead: true,
+          isStarred: false,
+        })
+      );
+    }
+    await Mail.insertMany(selfMail);
+    return null;
+  }
+  */
 
   try {
     await Mail.insertMany(newMails);
@@ -129,7 +170,18 @@ async function deleteMailById(id, username) {
 
 async function createCopyOfMail(mail) {
   try {
-    const copyMail = new Mail({ ...mail.toObject() });
+    const copyMail = new Mail({ ...mail.toObject(), _id: undefined });
+    await copyMail.save();
+    return copyMail;
+  } catch (error) {
+    console.error("Failed to create copy of mail:", error);
+    return null;
+  }
+}
+
+async function createCopyOfMailForSpam(mail) {
+  try {
+    const copyMail = new Mail({ ...mail, _id: undefined });
     await copyMail.save();
     return copyMail;
   } catch (error) {
@@ -276,4 +328,5 @@ module.exports = {
   searchMailContentSensitive,
   markStarredMail,
   markUnstarredMail,
+  createCopyOfMailForSpam,
 };
