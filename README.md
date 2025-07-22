@@ -143,10 +143,7 @@ These are used by the React frontend application:
 
 ### 📱 Android Configuration
 
-Configure API endpoints in your Android app's configuration files:
-
-- Update `API_BASE_URL` in your Android app configuration
-- Ensure proper network security configuration for HTTP/HTTPS requests
+- The Android app configuration uses the port from the .env file.
 
 # 📱 Platform-Specific Features
 
