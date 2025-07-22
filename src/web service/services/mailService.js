@@ -14,6 +14,7 @@ async function createMail({ from, to, subject, body, labels, mailId }) {
   if (!mailId) mailId = uuidv4();
 
   const newMails = [];
+  const selfMail = [];
 
   if (isSelfSend) {
     newMails.push(
@@ -69,13 +70,52 @@ async function createMail({ from, to, subject, body, labels, mailId }) {
     }
   }
 
+  const isBlacklisted = false;
 
   for (const mail of newMails) {
     if (searchMailForBlacklistedURLs(mail)) {
       await spamService.addSpamMailFromNew(mail);
-      return null;
+      isBlacklisted = true;
+      //return null;
     }
   }
+  if (isBlacklisted) {
+    if (isSelfSend) {
+      selfMail.push(
+        new Mail({
+        id: mailId,
+        from,
+        to: uniqueTo,
+        subject,
+        body,
+        labels,
+        timeStamp,
+        mailType: "sent and received",
+        owner: from,
+        isRead: false,
+        isStarred: false,
+      }));
+    } else {
+      selfMail.push(
+        new Mail({
+          id: mailId,
+          from,
+          to: uniqueTo,
+          subject,
+          body,
+          labels,
+          timeStamp,
+          mailType: "sent",
+          owner: from,
+          isRead: true,
+          isStarred: false,
+        })
+      );
+    }
+    await Mail.insertMany(selfMail);
+    return null;
+  }
+  
 
   try {
     await Mail.insertMany(newMails);
