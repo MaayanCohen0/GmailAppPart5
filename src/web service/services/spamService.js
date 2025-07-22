@@ -62,6 +62,7 @@ async function addSpamMailFromNew(mail) {
     };
     const mailsService = require("../services/mailService");
     await mailsService.createCopyOfMailForSpam(sentMail);
+  }
 
     for (const recipient of recipients) {
       if (recipient !== mail.from) {
@@ -82,7 +83,6 @@ async function addSpamMailFromNew(mail) {
         await receivedMail.save();
         spamCopies.push(receivedMail);
       }
-    }
   }
 
   return spamCopies;
