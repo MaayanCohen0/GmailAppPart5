@@ -119,33 +119,6 @@ http://localhost:3000
 ## 🌐 Environment Variables
 
 The system uses environment variables to configure server addresses, ports, security keys, and other settings across all platforms. You can edit them on the .env files.
-🔁 Environment Variables in root dir. (./.env)
-These are used by the backend servers and infrastructure:
-
-- FRONTEND_PORT – Port used by the frontend application.
-
-- BACKEND_PORT – Port for the backend server.
-
-- SERVER_PORT – Additional server port (e.g., for the blacklist service).
-
-- JWT_SECRET – Secret key used for signing JWT tokens.
-
-- BITS_ARRAY – Bit array size for the Bloom filter.
-
-- HASH_1, HASH_2 – Hash function identifiers for the Bloom filter (you can had more hash functions like "HASH_3, HASH_4, ....").
-
-- BLACKLIST_HOST – Hostname for the blacklist service.
-
-🌐 Environment Variables in /frontend (./src/frontend/.env)
-These are used by the React frontend application:
-
-- REACT_APP_WEBSOCKET_URL – WebSocket URL for communication with the backend.
-
-- REACT_APP_FRONTEND_URL – Base URL for the frontend interface.
-
-- REACT_APP_BACKEND_URL – URL of the backend API server.
-
-- REACT_APP_FRONTEND_PORT / REACT_APP_BACKEND_PORT – Ports for the frontend and backend apps.
 
 ### 🔁 Backend Environment Variables (./.env)
 
