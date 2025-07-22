@@ -3,11 +3,13 @@ package com.example.myemailapp.data.database.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
+import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "labels")
 public class Label {
     @PrimaryKey
     @NonNull
+    @SerializedName("_id") // This tells Gson to map "_id" from JSON to this field
     private String id;
 
     @NonNull

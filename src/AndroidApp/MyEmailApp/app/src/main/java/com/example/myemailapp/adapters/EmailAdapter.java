@@ -145,7 +145,7 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
 
             // Handle draft indicator with red color for "Draft" prefix
             //if ("drafts".equals(email.getTrashSource()) || email.isDraftInSpam()) {
-            if (false) {
+            if ("drafts".equals(email.getTrashSource())) {
                 String draftPrefix = ctx.getString(R.string.draft_prefix, "");
                 String fullText = draftPrefix + subject + " - " + body;
                 SpannableString spannable = new SpannableString(fullText);

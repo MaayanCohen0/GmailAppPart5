@@ -295,7 +295,7 @@ public class SearchResultFragment extends Fragment implements EmailAdapter.OnEma
 
     private void showEditLabelsDialog(Email email) {
         if (availableLabels.isEmpty()) {
-            Toast.makeText(getContext(), "Loading labels...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No labels yet...", Toast.LENGTH_SHORT).show();
             labelViewModel.refreshLabels();
             return;
         }
