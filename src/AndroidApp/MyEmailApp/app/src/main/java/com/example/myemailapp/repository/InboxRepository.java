@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myemailapp.BuildConfig;
 import com.example.myemailapp.model.Email;
 import com.google.gson.annotations.SerializedName;
 
@@ -38,6 +39,7 @@ import retrofit2.http.Path;
 public class InboxRepository {
     private static final String TAG = "InboxRepository";
     private static final String PREF_NAME = "auth";
+    String baseUrl = BuildConfig.BASE_URL;
 
     private final InboxRetrofitApi api;
     private final String authToken;
@@ -105,9 +107,11 @@ Call<EmailListWrapper> searchEmailsByQuery(
 
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.authToken = "Bearer " + prefs.getString("jwt", "");
+        Log.d("DEBUG", "Base URL: " + BuildConfig.BASE_URL);
 
+        // Use BuildConfig.BASE_URL instead of hardcoded URL
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/api/")
+                .baseUrl(BuildConfig.BASE_URL + "/")  // Add trailing slash
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

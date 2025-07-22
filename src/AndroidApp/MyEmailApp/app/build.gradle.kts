@@ -1,7 +1,18 @@
+
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
 
+val envProps = Properties().apply {
+    val envFile = rootProject.file("../../../.env")
+    if (envFile.exists()) {
+        envFile.inputStream().use { load(it) }
+    }
+}
+
+val port = envProps.getProperty("PORT", "8080")
 android {
     namespace = "com.example.myemailapp"
     compileSdk = 35
@@ -14,6 +25,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:$port/api\"")
+        buildConfigField ("String", "BASE_URL_NO_API", "\"http://10.0.2.2:${port}\"")
     }
 
     buildTypes {
@@ -31,6 +44,8 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+
     }
 }
 
