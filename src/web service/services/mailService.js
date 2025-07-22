@@ -2,7 +2,8 @@ const { v4: uuidv4 } = require("uuid");
 const Mail = require("../models/mailsModel");
 const blacklistModel = require("../services/blacklistService");
 const labelsModel = require("../services/labelsService");
-const spamModel = require("../models/spamModel");
+//const spamModel = require("../models/spamModel");
+const spamService = require("../services/spamService");
 
 async function createMail({ from, to, subject, body, labels, mailId }) {
   const timeStamp = new Date();
@@ -71,7 +72,7 @@ async function createMail({ from, to, subject, body, labels, mailId }) {
 
   for (const mail of newMails) {
     if (searchMailForBlacklistedURLs(mail)) {
-      await spamModel.addSpamMailFromNew(mail);
+      await spamService.addSpamMailFromNew(mail);
       return null;
     }
   }

@@ -1,6 +1,8 @@
 const Draft = require("../models/draftsModel");
-const blacklistModel = require("../models/blacklistModel");
-const labelsModel = require("../models/labelsModel");
+//const blacklistModel = require("../models/blacklistModel");
+const blacklistService = require("../services/blacklistService");
+//const labelsModel = require("../models/labelsModel");
+const labelsService = require("../services/labelsService");
 const { v4: uuidv4 } = require("uuid");
 
 /*
@@ -331,7 +333,7 @@ const searchDraftContentInsensitive = (query, draft) => {
   const hasQueryInToRecipients =
     draft.to && draft.to.some((r) => r.toLowerCase().includes(q));
 
-  const labelsObject = labelsModel.convertLabelsArrayToObjects(draft.labels);
+  const labelsObject = labelsService.convertLabelsArrayToObjects(draft.labels);
 
   const hasQueryInLabels =
     labelsObject &&
@@ -352,7 +354,7 @@ const searchDraftContentSensitive = (query, draft) => {
   const hasQueryInToRecipients =
     draft.to && draft.to.some((r) => r.includes(query));
 
-  const labelsObject = labelsModel.convertLabelsArrayToObjects(draft.labels);
+  const labelsObject = labelsService.convertLabelsArrayToObjects(draft.labels);
 
   const hasQueryInLabels =
     labelsObject &&
@@ -363,14 +365,14 @@ const searchDraftContentSensitive = (query, draft) => {
 
 
 const searchDraftForBlacklistedURLs = (draft) => {
-  return blacklistModel.getUrls().some((entry) =>
+  return blacklistService.getUrls().some((entry) =>
     searchDraftContentInsensitive(entry.url, draft)
   );
 };
 
 
 const searchDraftsForBlacklistedURLs = (mail) => {
-  return blacklistModel.getUrls().some((entry) =>
+  return blacklistService.getUrls().some((entry) =>
     searchDraftContentInsensitive(entry.url, mail)
   );
 };
