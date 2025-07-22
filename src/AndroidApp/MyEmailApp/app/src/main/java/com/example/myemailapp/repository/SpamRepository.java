@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myemailapp.BuildConfig;
 import com.example.myemailapp.model.Email;
 
 import java.util.Collections;
@@ -95,7 +96,7 @@ public class SpamRepository {
         this.authToken = "Bearer " + prefs.getString("jwt", "");
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/api/")
+                .baseUrl(BuildConfig.BASE_URL + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

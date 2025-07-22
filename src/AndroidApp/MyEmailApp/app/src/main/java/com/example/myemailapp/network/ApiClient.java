@@ -18,6 +18,8 @@ package com.example.myemailapp.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.myemailapp.BuildConfig;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,7 +56,7 @@ public class ApiClient {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:8080/api/")
+                    .baseUrl(BuildConfig.BASE_URL + "/")
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

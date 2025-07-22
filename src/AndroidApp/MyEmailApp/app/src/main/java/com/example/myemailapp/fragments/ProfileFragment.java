@@ -12,11 +12,12 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.myemailapp.BuildConfig;
 import com.example.myemailapp.R;
 
 public class ProfileFragment extends Fragment {
 
-    private static final String BASE_URL = "http://10.0.2.2:8080"; // Replace with actual base URL
+    private static final String BASE_URL = BuildConfig.BASE_URL_NO_API; // Replace with actual base URL
 
     private ImageView profileImageView;
     private TextView nameTextView;

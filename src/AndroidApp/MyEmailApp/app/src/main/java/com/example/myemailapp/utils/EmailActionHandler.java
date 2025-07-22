@@ -14,6 +14,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.example.myemailapp.BuildConfig;
 import com.example.myemailapp.model.Email;
 public class EmailActionHandler {
     private final Context context;
@@ -23,7 +25,7 @@ public class EmailActionHandler {
     public EmailActionHandler(Context context, String token) {
         this.context = context;
         this.token = token;
-        this.baseUrl = "http://10.0.2.2:8080/api"; // Adjust port as needed
+        this.baseUrl = BuildConfig.BASE_URL; // Adjust port as needed
     }
 
     // Interface for callbacks

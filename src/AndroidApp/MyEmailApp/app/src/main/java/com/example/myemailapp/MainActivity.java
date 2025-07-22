@@ -43,8 +43,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String BASE_URL = "http://10.0.2.2:8080"; // 10.0.2.2 = localhost from emulator
-
+    private static final String BASE_URL = BuildConfig.BASE_URL_NO_API; // 10.0.2.2 = localhost from emulator
+    //String baseUrl = BuildConfig.BASE_URL;
     private static final String TAG = "MainActivity";
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;

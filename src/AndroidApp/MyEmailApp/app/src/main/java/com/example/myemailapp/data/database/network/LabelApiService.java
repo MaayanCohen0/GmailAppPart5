@@ -2,6 +2,8 @@ package com.example.myemailapp.data.database.network;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.example.myemailapp.BuildConfig;
 import com.example.myemailapp.data.database.entity.Label;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,8 +27,8 @@ public class LabelApiService {
         this.gson = new Gson();
 
         // Get base URL from BuildConfig or use default
-        String port = "8080"; // You can make this configurable
-        this.baseUrl = "http://10.0.2.2:8080" + "/api/labels";
+        //String port = "8080"; // You can make this configurable
+        this.baseUrl = BuildConfig.BASE_URL + "/labels";
 
         this.client = new OkHttpClient.Builder()
                 .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
