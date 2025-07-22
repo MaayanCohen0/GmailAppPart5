@@ -1,6 +1,8 @@
 package com.example.myemailapp.model;
+import org.bson.types.ObjectId;
 
 public class User {
+    //private ObjectId id;
     private String id;
     private String username;
     private String firstName;
@@ -11,6 +13,7 @@ public class User {
     private String gender;
 
     // Getters
+    //public ObjectId getId() { return id; }
     public String getId() { return id; }
     public String getUsername() { return username; }
     public String getFirstName() { return firstName; }
